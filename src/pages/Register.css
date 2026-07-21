@@ -1,0 +1,191 @@
+:root {
+  --bg-color: #0c151d;
+  --card-bg: rgba(23, 32, 42, 0.75);
+  --card-border: rgba(255, 255, 255, 0.07);
+  --input-bg: rgba(13, 20, 27, 0.8);
+  --input-border: rgba(255, 255, 255, 0.1);
+  --text-primary: #e2e8f0;
+  --text-muted: #94a3b8;
+  --accent-color: #1a3d4a; 
+  --accent-hover: #235163;
+  --accent-link: #5fe3d0;  
+}
+
+.register-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  background: radial-gradient(circle at center, #101c26 0%, var(--bg-color) 100%);
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.register-card {
+  width: 100%;
+  max-width: 380px; 
+  background: var(--card-bg);
+ 
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--card-border);
+  border-radius: 22px;
+  padding: 30px;
+  color: var(--text-primary);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+}
+
+.register-logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  color: var(--text-primary);
+}
+
+.register-logo h1 {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.register-card h2 {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 500;
+  margin-bottom: 10px;
+  color: #ffffff;
+}
+
+.register-card p {
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}
+
+
+.input-group {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.input-group input {
+  width: 100%;
+  height: 48px;
+  padding: 0 45px;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 10px;
+  font-size: 14px;
+  color: var(--text-primary);
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: var(--accent-link);
+  background: rgba(13, 20, 27, 0.95);
+  box-shadow: 0 0 8px rgba(95, 227, 208, 0.15);
+}
+
+.icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 16px;
+  pointer-events: none;
+}
+
+.eye {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 16px;
+  transition: color 0.2s;
+}
+
+.eye:hover {
+  color: var(--text-primary);
+}
+
+/* Styled Terms & Conditions check block */
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 18px 0;
+  font-size: 14px;
+  color: var(--text-muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent-link); 
+  cursor: pointer;
+}
+
+.register-button {
+  width: 100%;
+  height: 48px;
+  border: none;
+  border-radius: 12px;
+  background: var(--accent-color);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(26, 61, 74, 0.3);
+}
+
+.register-button:hover {
+  background: var(--accent-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(26, 61, 74, 0.4);
+}
+
+.register-button:active {
+  transform: translateY(0);
+}
+
+.register-footer {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.register-footer a {
+  color: var(--accent-link);
+  font-weight: 600;
+  text-decoration: none;
+  margin-left: 4px;
+  transition: opacity 0.2s;
+}
+
+.register-footer a:hover {
+  text-decoration: underline;
+  opacity: 0.9;
+}
+
+
+@media (max-width: 500px) {
+  .register-card {
+    padding: 28px 20px;
+  }
+  .register-logo h1 {
+    font-size: 22px;
+  }
+}

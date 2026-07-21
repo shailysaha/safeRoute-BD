@@ -1,0 +1,41 @@
+.report-list{
+    width:350px;
+    height:100vh;
+    overflow-y:auto;
+    background:#ffffff;
+    border-left:1px solid #ddd;
+    padding:20px;
+}
+
+.report-list h2{
+    text-align:center;
+    margin-bottom:20px;
+    color:#1e3a8a;
+}
+
+.report-card{
+    background:#f8fafc;
+    padding:15px;
+    margin-bottom:15px;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,.1);
+    transition:.3s;
+}
+
+.report-card:hover{
+    transform:translateY(-4px);
+}
+
+.report-card h3{
+    color:#2563eb;
+    margin-bottom:10px;
+}
+
+.report-card p{
+    margin:6px 0;
+    font-size:14px;
+}
+
+.report-card hr{
+    margin-top:12px;
+}

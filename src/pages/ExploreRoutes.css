@@ -1,0 +1,59 @@
+.explore-page{
+
+display:flex;
+
+height:100vh;
+
+background:#eef4fb;
+
+overflow:hidden;
+
+}
+
+.planner-panel{
+
+width:360px;
+
+background:white;
+
+box-shadow:0 10px 30px rgba(0,0,0,.1);
+
+z-index:999;
+
+padding:25px;
+
+overflow-y:auto;
+
+}
+
+.map-panel{
+
+flex:1;
+
+height:100%;
+
+}
+.explore-page {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.planner-panel {
+    width: 30%;
+    height: 100%;
+    overflow-y: auto;
+    background: #ffffff;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+.map-panel {
+    width: 70%;
+    height: 100%;
+    position: relative;
+}
