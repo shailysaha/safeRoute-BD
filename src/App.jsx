@@ -8,7 +8,6 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Admin from "./pages/Admin";
 import ExploreRoutes from "./pages/ExploreRoutes";
-import Profile from "./pages/Profile";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -16,25 +15,20 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-
         {/* Public Routes */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/about" element={<About />} />
-        <Route path="/reports" element={<Reports />} />
-        <Route path="/map" element={<MapPage />} />
         <Route path="/explore-routes" element={<ExploreRoutes />} />
-        <Route path="/Profile" element={<Profile />} />
-       
-
+        <Route path="/map" element={<MapPage hideSidebar={true} />} />
 
         {/* Protected Routes */}
         <Route
-          path="/map"
+          path="/report-area"
           element={
             <ProtectedRoute>
-              <MapPage />
+              <MapPage hideSidebar={false} />
             </ProtectedRoute>
           }
         />
@@ -56,13 +50,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route
-         path="/explore"
-         element={<ExploreRoutes />}
-        />
-
-    
-
       </Routes>
     </BrowserRouter>
   );

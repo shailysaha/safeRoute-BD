@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   MapContainer,
   TileLayer,
@@ -8,23 +9,19 @@ import {
   useMap,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+
+import { collection, addDoc, getDocs } from "firebase/firestore";
+import { auth, db } from "../firebase/firebase";
+
 import DashboardLayout from "../layout/DashboardLayout";
-import "./MapPage.css";
-
-import {
-  collection,
-  addDoc,
-  getDocs,
-} from "firebase/firestore";
-
-import { db } from "../firebase/firebase";
-
 import SOSButton from "../components/SOSButton";
-import "../components/SOSButton.css";
 import PoliceStations from "../components/PoliceStations";
 import Hospitals from "../components/Hospitals";
 import ReportSidebar from "../components/ReportSidebar";
 import MyLocationButton from "../components/MyLocationButton";
+
+import "./MapPage.css";
+import "../components/SOSButton.css";
 
 import {
   redIcon,
@@ -99,13 +96,9 @@ function FlyToLocation({ location }) {
   useEffect(() => {
     if (!location || isNaN(location.lat) || isNaN(location.lng)) return;
 
-    map.flyTo(
-      [Number(location.lat), Number(location.lng)],
-      16,
-      {
-        duration: 1.5,
-      }
-    );
+    map.flyTo([Number(location.lat), Number(location.lng)], 16, {
+      duration: 1.5,
+    });
   }, [location, map]);
 
   return null;
@@ -113,9 +106,10 @@ function FlyToLocation({ location }) {
 
 // 4. Main MapPage Component
 function MapPage({ hideSidebar = false }) {
+  const navigate = useNavigate();
   const [selectedLocation, setSelectedLocation] = useState(null);
-  const [map, setMap] = useState(null);
   const [reports, setReports] = useState([]);
+  const [map, setMap] = useState(null);
 
   useEffect(() => {
     loadReports();
@@ -137,22 +131,44 @@ function MapPage({ hideSidebar = false }) {
   };
 
   const submitReport = async (report) => {
+    const currentUser = auth.currentUser;
+
+    if (!currentUser) {
+      alert("You must login before submitting a report.");
+
+      navigate("/login", {
+        state: {
+          from: {
+            pathname: "/map",
+          },
+        },
+        replace: true,
+      });
+
+      return false;
+    }
+
     if (!selectedLocation) {
       alert("Select a location first.");
-      return;
+      return false;
     }
 
     const newReport = {
       ...report,
-      lat: selectedLocation.lat,
-      lng: selectedLocation.lng,
-      area: selectedLocation.area,
-      district: selectedLocation.district,
+      lat: Number(selectedLocation.lat),
+      lng: Number(selectedLocation.lng),
+      area: selectedLocation.area || report.area,
+      district: selectedLocation.district || report.district,
+      userId: currentUser.uid,
+      userEmail: currentUser.email || "",
       createdAt: new Date().toISOString(),
     };
 
     try {
-      const docRef = await addDoc(collection(db, "reports"), newReport);
+      const docRef = await addDoc(
+        collection(db, "reports"),
+        newReport
+      );
 
       const savedReport = {
         id: docRef.id,
@@ -161,10 +177,17 @@ function MapPage({ hideSidebar = false }) {
 
       setReports((prev) => [...prev, savedReport]);
 
-      alert("✅ Report Saved");
+      return true;
     } catch (error) {
-      console.error(error);
-      alert("Failed to save report");
+      console.error("Report save error:", error);
+
+      if (error.code === "permission-denied") {
+        alert("You do not have permission to submit this report.");
+      } else {
+        alert("Failed to save report.");
+      }
+
+      return false;
     }
   };
 
@@ -190,6 +213,22 @@ function MapPage({ hideSidebar = false }) {
   };
 
   const handleSOS = async () => {
+    const currentUser = auth.currentUser;
+
+    if (!currentUser) {
+      alert("Please login before sending an SOS alert.");
+
+      navigate("/login", {
+        state: {
+          from: {
+            pathname: "/map",
+          },
+        },
+      });
+
+      return;
+    }
+
     if (!selectedLocation) {
       alert("Select your current location first.");
       return;
@@ -200,6 +239,8 @@ function MapPage({ hideSidebar = false }) {
       lng: selectedLocation.lng,
       area: selectedLocation.area,
       district: selectedLocation.district,
+      userId: currentUser.uid,
+      userEmail: currentUser.email,
       status: "ACTIVE",
       createdAt: new Date().toISOString(),
     };
@@ -215,8 +256,10 @@ function MapPage({ hideSidebar = false }) {
 
   return (
     <DashboardLayout>
-      <div className="page-layout" style={{ display: "flex", width: "100%", height: "100vh" }}>
-        
+      <div
+        className="page-layout"
+        style={{ display: "flex", width: "100%", height: "100vh" }}
+      >
         {/* Map Section */}
         <div
           style={{
@@ -240,7 +283,7 @@ function MapPage({ hideSidebar = false }) {
             }}
           >
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-            
+
             {/* Smooth flying animation component */}
             <FlyToLocation location={selectedLocation} />
 
@@ -259,35 +302,53 @@ function MapPage({ hideSidebar = false }) {
                 <Popup>
                   <div style={{ minWidth: "220px" }}>
                     <h3>🚨 Report</h3>
-                    <p><strong>Area:</strong> {report.area}</p>
-                    <p><strong>District:</strong> {report.district}</p>
-                    <p><strong>Danger:</strong> {report.dangerType}</p>
-                    <p><strong>Severity:</strong> {report.severity}</p>
-                    <p><strong>Description:</strong></p>
+                    <p>
+                      <strong>Area:</strong> {report.area}
+                    </p>
+                    <p>
+                      <strong>District:</strong> {report.district}
+                    </p>
+                    <p>
+                      <strong>Danger:</strong> {report.dangerType}
+                    </p>
+                    <p>
+                      <strong>Severity:</strong> {report.severity}
+                    </p>
+                    <p>
+                      <strong>Description:</strong>
+                    </p>
                     <p>{report.description}</p>
                     <hr />
-                    <small>Latitude: {Number(report.lat).toFixed(5)}</small>
+                    <small>
+                      Latitude: {Number(report.lat).toFixed(5)}
+                    </small>
                     <br />
-                    <small>Longitude: {Number(report.lng).toFixed(5)}</small>
+                    <small>
+                      Longitude: {Number(report.lng).toFixed(5)}
+                    </small>
                   </div>
                 </Popup>
               </Marker>
             ))}
 
             {/* Highlighted selection marker with validation and popup */}
-            {selectedLocation && !isNaN(selectedLocation.lat) && !isNaN(selectedLocation.lng) && (
-              <Marker
-                position={[
-                  Number(selectedLocation.lat),
-                  Number(selectedLocation.lng),
-                ]}
-              >
-                <Popup>{selectedLocation.name || "Selected Location"}</Popup>
-              </Marker>
-            )}
+            {selectedLocation &&
+              !isNaN(selectedLocation.lat) &&
+              !isNaN(selectedLocation.lng) && (
+                <Marker
+                  position={[
+                    Number(selectedLocation.lat),
+                    Number(selectedLocation.lng),
+                  ]}
+                >
+                  <Popup>
+                    {selectedLocation.name || "Selected Location"}
+                  </Popup>
+                </Marker>
+              )}
           </MapContainer>
         </div>
-        
+
         {/* Sidebar Section */}
         {!hideSidebar && (
           <div style={{ flex: "0 0 30%", height: "100%" }}>
@@ -298,7 +359,6 @@ function MapPage({ hideSidebar = false }) {
             />
           </div>
         )}
-
       </div>
     </DashboardLayout>
   );

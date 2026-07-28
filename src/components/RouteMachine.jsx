@@ -3,59 +3,94 @@ import { useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet-routing-machine";
 
-// Fixed: Added onRouteFound to the component props destructured definition
-function RouteMachine({ start, end, onRouteFound }) {
+function RouteMachine({
+  currentLocation,
+  destination,
+  setDistance,
+  setDuration,
+  onRouteCalculated,
+}) {
   const map = useMap();
 
   useEffect(() => {
-    if (!start || !end) return;
+    if (
+      !currentLocation ||
+      !destination ||
+      Number.isNaN(Number(currentLocation.lat)) ||
+      Number.isNaN(Number(currentLocation.lng)) ||
+      Number.isNaN(Number(destination.lat)) ||
+      Number.isNaN(Number(destination.lng))
+    ) {
+      return undefined;
+    }
 
-    // Initialize the Leaflet Routing control
     const routingControl = L.Routing.control({
       waypoints: [
-        L.latLng(start.lat, start.lng),
-        L.latLng(end.lat, end.lng)
+        L.latLng(
+          Number(currentLocation.lat),
+          Number(currentLocation.lng)
+        ),
+        L.latLng(
+          Number(destination.lat),
+          Number(destination.lng)
+        ),
       ],
+
+      routeWhileDragging: false,
+      addWaypoints: false,
+      draggableWaypoints: false,
+      fitSelectedRoutes: true,
+      show: false,
+
       lineOptions: {
         styles: [
           {
             color: "#2563eb",
-            weight: 6
-          }
-        ]
+            opacity: 0.9,
+            weight: 6,
+          },
+        ],
       },
-      createMarker: function(i, wp) {
-        return L.marker(wp.latLng);
-      },
-      addWaypoints: false,
-      draggableWaypoints: false,
-      fitSelectedRoutes: true,
-      show: false
     }).addTo(map);
 
-    // Fixed: Listening to routing engine calculations to pass distance & time upwards
-    routingControl.on("routesfound", function(e) {
-      const route = e.routes[0];
-      
-      // Convert total distance from meters to kilometers
-      const distance = (route.summary.totalDistance / 1000).toFixed(2);
-      
-      // Convert total duration from seconds to minutes
-      const duration = Math.round(route.summary.totalTime / 60);
+    routingControl.on("routesfound", (event) => {
+      const route = event.routes?.[0];
 
-      if (onRouteFound) {
-        onRouteFound(distance, duration);
+      if (!route) {
+        return;
+      }
+
+      const distanceKm = route.summary.totalDistance / 1000;
+      const durationMinutes = route.summary.totalTime / 60;
+
+      setDistance(distanceKm);
+      setDuration(durationMinutes);
+
+      if (onRouteCalculated) {
+        onRouteCalculated(route);
       }
     });
 
-    // Cleanup phase: Unmount control when location coordinates change or component unmounts
+    routingControl.on("routingerror", (event) => {
+      console.error("Route calculation failed:", event);
+
+      setDistance("");
+      setDuration("");
+    });
+
     return () => {
       map.removeControl(routingControl);
     };
-  }, [start, end, map, onRouteFound]); // Fixed: Added onRouteFound to dependency array
+  }, [
+    map,
+    currentLocation,
+    destination,
+    setDistance,
+    setDuration,
+    onRouteCalculated,
+  ]);
 
   return null;
 }
 
 export default RouteMachine;
-

@@ -1,5 +1,7 @@
-import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth } from "../firebase/firebase";
 import {
   FaShieldAlt,
   FaMoon,
@@ -12,14 +14,23 @@ import "./Navbar.css";
 
 function Navbar() {
   const location = useLocation();
+  const navigate = useNavigate();
 
+  const [currentUser, setCurrentUser] = useState(undefined);
   const [darkMode, setDarkMode] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const toggleTheme = () => {
     const newMode = !darkMode;
     setDarkMode(newMode);
-
     document.body.classList.toggle("dark-mode", newMode);
   };
 
@@ -27,9 +38,19 @@ function Navbar() {
     setMenuOpen(false);
   };
 
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      setMenuOpen(false);
+      navigate("/");
+    } catch (error) {
+      console.error("Logout failed:", error);
+      alert("Logout failed.");
+    }
+  };
+
   return (
     <nav className="navbar">
-
       {/* Logo */}
       <div className="logo">
         <FaShieldAlt />
@@ -38,7 +59,6 @@ function Navbar() {
 
       {/* Navigation Links */}
       <div className={`nav-links ${menuOpen ? "show" : ""}`}>
-
         <Link
           to="/"
           className={location.pathname === "/" ? "active" : ""}
@@ -47,6 +67,7 @@ function Navbar() {
           Home
         </Link>
 
+        {/* Full Public Map Link */}
         <Link
           to="/map"
           className={location.pathname === "/map" ? "active" : ""}
@@ -54,6 +75,8 @@ function Navbar() {
         >
           Map
         </Link>
+
+        
 
         <Link
           to="/reports"
@@ -78,12 +101,10 @@ function Navbar() {
         >
           Admin
         </Link>
-
       </div>
 
       {/* Right Side Buttons */}
       <div className="nav-actions">
-
         <button
           className="theme-btn"
           onClick={toggleTheme}
@@ -92,13 +113,23 @@ function Navbar() {
           {darkMode ? <FaSun /> : <FaMoon />}
         </button>
 
-        <Link
-          to="/login"
-          className="login-btn"
-          onClick={closeMenu}
-        >
-          Login
-        </Link>
+        {currentUser ? (
+          <button
+            type="button"
+            className="login-btn"
+            onClick={handleLogout}
+          >
+            Logout
+          </button>
+        ) : (
+          <Link
+            to="/login"
+            className="login-btn"
+            onClick={closeMenu}
+          >
+            Login
+          </Link>
+        )}
 
         <button
           className="menu-btn"
@@ -106,9 +137,7 @@ function Navbar() {
         >
           {menuOpen ? <FaTimes /> : <FaBars />}
         </button>
-
       </div>
-
     </nav>
   );
 }

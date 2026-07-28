@@ -13,63 +13,81 @@ function ReportSidebar({ selectedLocation, setSelectedLocation, onSubmit }) {
     description: "",
   });
 
-  // Updated useEffect to log and properly map the incoming clean location object
+  // Map incoming selected location object into local form state
   useEffect(() => {
     if (!selectedLocation) return;
 
     console.log("Selected Location:", selectedLocation);
 
     setFormData({
-      area: selectedLocation.area,
-      district: selectedLocation.district,
-      lat: selectedLocation.lat,
-      lng: selectedLocation.lng,
+      area: selectedLocation.area || "",
+      district: selectedLocation.district || "",
+      lat: selectedLocation.lat || "",
+      lng: selectedLocation.lng || "",
       dangerType: "",
       severity: "",
       description: "",
     });
   }, [selectedLocation]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!formData.lat || !formData.lng) {
-      alert("Please select a location on the map or use the search bar first.");
+      alert(
+        "Please select a location on the map or use the search bar first."
+      );
       return;
     }
 
-    if (!formData.area || !formData.district || !formData.dangerType || !formData.severity) {
+    if (
+      !formData.area ||
+      !formData.district ||
+      !formData.dangerType ||
+      !formData.severity
+    ) {
       alert("Please fill all required fields.");
       return;
     }
 
-    onSubmit({
-      area: formData.area,
-      district: formData.district,
-      lat: formData.lat,
-      lng: formData.lng,
-      dangerType: formData.dangerType,
-      severity: formData.severity,
-      description: formData.description,
-    });
+    try {
+      const success = await onSubmit({
+        area: formData.area,
+        district: formData.district,
+        lat: formData.lat,
+        lng: formData.lng,
+        dangerType: formData.dangerType,
+        severity: formData.severity,
+        description: formData.description,
+      });
 
-    alert("✅ Report Submitted Successfully!");
+      // Do not show success or reset if login is required or submit failed
+      if (!success) {
+        return;
+      }
 
-    // Reset Form
-    setFormData({
-      area: "",
-      district: "",
-      lat: "",
-      lng: "",
-      dangerType: "",
-      severity: "",
-      description: "",
-    });
+      alert("✅ Report Submitted Successfully!");
+
+      // Reset Form and Selection
+      setFormData({
+        area: "",
+        district: "",
+        lat: "",
+        lng: "",
+        dangerType: "",
+        severity: "",
+        description: "",
+      });
+
+      setSelectedLocation(null);
+    } catch (error) {
+      console.error("Sidebar submission error:", error);
+      alert("Failed to submit report.");
+    }
   };
 
   return (
     <div className="sidebar">
       <h2>🚨 Report Dangerous Area</h2>
 
-      {/* Simplified callback to pass raw data directly and log it */}
       <SearchLocation
         onLocationSelect={(location) => {
           console.log(location);
@@ -79,13 +97,15 @@ function ReportSidebar({ selectedLocation, setSelectedLocation, onSubmit }) {
 
       <hr style={{ margin: "15px 0", border: "0.5px solid #ccc" }} />
 
-      {/* Disabled Fields */}
+      {/* Location Details (Auto-filled) */}
       <input placeholder="Area Name" value={formData.area} disabled />
       <input placeholder="District Name" value={formData.district} disabled />
 
       <select
         value={formData.dangerType}
-        onChange={(e) => setFormData({ ...formData, dangerType: e.target.value })}
+        onChange={(e) =>
+          setFormData({ ...formData, dangerType: e.target.value })
+        }
       >
         <option value="">Select Danger</option>
         <option>Robbery</option>
@@ -98,7 +118,9 @@ function ReportSidebar({ selectedLocation, setSelectedLocation, onSubmit }) {
 
       <select
         value={formData.severity}
-        onChange={(e) => setFormData({ ...formData, severity: e.target.value })}
+        onChange={(e) =>
+          setFormData({ ...formData, severity: e.target.value })
+        }
       >
         <option value="">Select Severity</option>
         <option>Low</option>
@@ -109,14 +131,15 @@ function ReportSidebar({ selectedLocation, setSelectedLocation, onSubmit }) {
       <textarea
         placeholder="Description"
         value={formData.description}
-        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+        onChange={(e) =>
+          setFormData({ ...formData, description: e.target.value })
+        }
       />
 
-      {/* Added Debug Paragraphs */}
+      {/* Latitude & Longitude Preview */}
       <p>LAT : {formData.lat}</p>
       <p>LNG : {formData.lng}</p>
 
-      {/* Disabled Fields */}
       <input
         placeholder="Latitude"
         value={formData.lat ? Number(formData.lat).toFixed(6) : ""}

@@ -57,3 +57,53 @@ height:100%;
     height: 100%;
     position: relative;
 }
+.explore-routes-page {
+  display: grid;
+  grid-template-columns: 420px minmax(0, 1fr);
+
+  width: 100%;
+  height: calc(100vh - 70px);
+  overflow: hidden;
+
+  background: #e2e8f0;
+}
+
+.explore-sidebar {
+  min-width: 0;
+  height: 100%;
+  overflow-y: auto;
+
+  background: #f8fafc;
+  border-right: 1px solid #dbe2ea;
+}
+
+.explore-map {
+  position: relative;
+  min-width: 0;
+  height: 100%;
+}
+
+.explore-map .leaflet-container {
+  width: 100%;
+  height: 100%;
+}
+
+@media (max-width: 900px) {
+  .explore-routes-page {
+    display: flex;
+    height: auto;
+    min-height: 100vh;
+    flex-direction: column;
+  }
+
+  .explore-sidebar {
+    width: 100%;
+    height: auto;
+    max-height: none;
+  }
+
+  .explore-map {
+    width: 100%;
+    height: 65vh;
+  }
+}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import "./ExploreRoutes.css";
 
 import RoutePlanner from "../components/RoutePlanner";
@@ -14,103 +14,184 @@ function ExploreRoutes() {
   const [destination, setDestination] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState(null);
 
-  // State trackers for infrastructure counts
   const [policeCount, setPoliceCount] = useState(0);
   const [hospitalCount, setHospitalCount] = useState(0);
 
-  // Geocodes manual target text input strings via Nominatim
-  const handleFindRoute = async (destinationText, mode) => {
-    if (!destinationText.trim()) return;
-
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-          destinationText
-        )}`
-      );
-      const data = await response.json();
-
-      if (!data.length) {
-        alert("Destination not found.");
-        return;
-      }
-
-      // FIX 1: Changed data[0].lng to data[0].lon to match Nominatim API payload
-      const targetPlace = {
-        lat: Number(data[0].lat),
-        lng: Number(data[0].lon), 
-        name: data[0].display_name,
-      };
-
-      // Added debug tracker as requested
-      console.log("Destination", targetPlace);
-
-      setDestination(targetPlace);
-      setSelectedLocation(targetPlace);
-    } catch (error) {
-      console.error(error);
-      alert("Unable to find destination.");
+  // Memoized safety score calculator
+  const calculateSafetyScore = useCallback((route) => {
+    if (!route?.summary) {
+      setSafetyScore(100);
+      return;
     }
+
+    const routeDistanceKm = Number(route.summary.totalDistance) / 1000;
+    const routeDurationMinutes = Number(route.summary.totalTime) / 60;
+
+    let score = 100;
+
+    if (routeDistanceKm > 10) score -= 5;
+    if (routeDistanceKm > 25) score -= 5;
+    if (routeDurationMinutes > 45) score -= 5;
+    if (routeDurationMinutes > 90) score -= 5;
+
+    setSafetyScore(Math.max(0, Math.min(100, Math.round(score))));
+  }, []);
+
+  const resetRouteInformation = () => {
+    setDistance("");
+    setDuration("");
+    setSafetyScore(100);
+    setPoliceCount(0);
+    setHospitalCount(0);
   };
 
-  const handleRouteFound = (calculatedDistance, calculatedTime) => {
-    setDistance(calculatedDistance);
-    setDuration(calculatedTime);
+  const normalizeLocation = (
+    location,
+    fallbackName = "Selected location"
+  ) => {
+    if (!location) return null;
 
-    const score = Math.floor(Math.random() * 15) + 85;
-    setSafetyScore(score);
+    const lat = Number(location.lat);
+    const lng = Number(location.lng);
+
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+
+    return {
+      lat,
+      lng,
+      name: location.name || location.display_name || fallbackName,
+    };
   };
+
+  const handleFindRoute = (selectedPlace) => {
+    if (
+      !selectedPlace ||
+      !Number.isFinite(Number(selectedPlace.lat)) ||
+      !Number.isFinite(Number(selectedPlace.lng))
+    ) {
+      console.error("Invalid selected destination:", selectedPlace);
+      return;
+    }
+
+    setDistance("");
+    setDuration("");
+    setSafetyScore(100);
+
+    setPoliceCount(0);
+    setHospitalCount(0);
+
+    const destinationData = {
+      lat: Number(selectedPlace.lat),
+      lng: Number(selectedPlace.lng),
+      name:
+        selectedPlace.name ||
+        selectedPlace.display_name ||
+        "Selected destination",
+    };
+
+    console.log("NEW DESTINATION:", destinationData);
+
+    setDestination(destinationData);
+    setSelectedLocation(destinationData);
+  };
+
+  const handleSearchLocationSelect = (location) => {
+    const locationData = normalizeLocation(
+      location,
+      "Selected location"
+    );
+
+    if (!locationData) {
+      console.error(
+        "Invalid location selected from search:",
+        location
+      );
+      return;
+    }
+
+    setDistance("");
+    setDuration("");
+    setSafetyScore(100);
+
+    setPoliceCount(0);
+    setHospitalCount(0);
+
+    console.log("Selected place from search:", locationData);
+
+    setSelectedLocation(locationData);
+    setDestination(locationData);
+  };
+
+  const handleCurrentLocation = (location) => {
+    const currentLocationData = normalizeLocation(
+      location,
+      "Current location"
+    );
+
+    if (!currentLocationData) {
+      console.error("Invalid current location:", location);
+      return;
+    }
+
+    resetRouteInformation();
+    setCurrentLocation(currentLocationData);
+  };
+
+  // Stabilized callbacks prevent child useEffect dependency loops
+  const handlePoliceFound = useCallback((count) => {
+    const numericCount = Number(count);
+    console.log("Police count received:", numericCount);
+
+    setPoliceCount(
+      Number.isFinite(numericCount)
+        ? Math.max(0, Math.round(numericCount))
+        : 0
+    );
+  }, []);
+
+  const handleHospitalFound = useCallback((count) => {
+    const numericCount = Number(count);
+    console.log("Hospital count received:", numericCount);
+
+    setHospitalCount(
+      Number.isFinite(numericCount)
+        ? Math.max(0, Math.round(numericCount))
+        : 0
+    );
+  }, []);
 
   return (
     <div className="explore-page">
-      {/* Left Panel */}
-      <div className="planner-panel">
-        
-        {/* Updated Search Location Component */}
-        {/* FIX 2: Removed rebuilding the object with broken display_name strings */}
-        <SearchLocation
-          onLocationSelect={(location) => {
-            console.log("Selected Place from Search:", location);
-            
-            // Pass the clean pre-formatted object directly 
-            setSelectedLocation(location);
-            setDestination(location);
-          }}
-        />
-
-        <hr style={{ margin: "20px 0" }} />
+      <aside className="planner-panel">
+        <div className="top-location-search">
+          <SearchLocation
+            onLocationSelect={handleSearchLocationSelect}
+          />
+        </div>
 
         <RoutePlanner
           onFindRoute={handleFindRoute}
-          onGetLocation={setCurrentLocation}
+          onGetLocation={handleCurrentLocation}
           distance={distance}
           duration={duration}
           safetyScore={safetyScore}
+          policeCount={policeCount}
+          hospitalCount={hospitalCount}
         />
+      </aside>
 
-        <div className="route-info" style={{ marginTop: "20px", padding: "15px", background: "#f3f4f6", borderRadius: "8px" }}>
-          <h2>Route Information</h2>
-          <p>📏 Distance: {distance || "--"} km</p>
-          <p>⏱ Time: {duration || "--"} min</p>
-          <p>🛡 Safety Score: {safetyScore}%</p>
-          <hr />
-          <h3>Nearby</h3>
-          <p>🚨 Police : {policeCount}</p>
-          <p>🏥 Hospitals : {hospitalCount}</p>
-        </div>
-      </div>
-
-      {/* Right Panel */}
-      <div className="map-panel">
+      <main className="map-panel">
         <MapView
           currentLocation={currentLocation}
           destination={destination}
           selectedLocation={selectedLocation}
-          onRouteFound={handleRouteFound}
-          onPoliceFound={setPoliceCount}
-          onHospitalFound={setHospitalCount}
+          setDistance={setDistance}
+          setDuration={setDuration}
+          onPoliceFound={handlePoliceFound}
+          onHospitalFound={handleHospitalFound}
+          onRouteCalculated={calculateSafetyScore}
         />
-      </div>
+      </main>
     </div>
   );
 }

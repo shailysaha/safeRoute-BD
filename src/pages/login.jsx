@@ -1,5 +1,9 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 import {
   FaEnvelope,
   FaLock,
@@ -15,11 +19,11 @@ import { auth } from "../firebase/firebase";
 
 function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/map";
 
   const [showPassword, setShowPassword] = useState(false);
-
   const [email, setEmail] = useState("");
-
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
@@ -37,7 +41,7 @@ function Login() {
 
       alert("✅ Login Successful");
 
-      navigate("/map");
+      navigate(from, { replace: true });
 
     } catch (error) {
       alert(error.message);

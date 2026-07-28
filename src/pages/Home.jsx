@@ -31,7 +31,7 @@ function Home() {
               </button>
             </Link>
 
-            <Link to="/map">
+            <Link to="/report-area">
               <button className="secondary-btn">
                 🚨 Report Area
               </button>
