@@ -56,9 +56,13 @@ function RouteMachine({
     routingControl.on("routesfound", (event) => {
       const route = event.routes?.[0];
 
-      if (!route) {
-        return;
-      }
+      if (!route) return;
+
+      // Extract raw coordinate points along the calculated polyline
+      const routeCoordinates = route.coordinates.map((coordinate) => ({
+        lat: coordinate.lat,
+        lng: coordinate.lng,
+      }));
 
       const distanceKm = route.summary.totalDistance / 1000;
       const durationMinutes = route.summary.totalTime / 60;
@@ -67,7 +71,10 @@ function RouteMachine({
       setDuration(durationMinutes);
 
       if (onRouteCalculated) {
-        onRouteCalculated(route);
+        onRouteCalculated({
+          route,
+          routeCoordinates,
+        });
       }
     });
 

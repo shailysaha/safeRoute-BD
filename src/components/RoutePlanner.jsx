@@ -1,57 +1,103 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import RouteAlerts from "./RouteAlerts";
 import "./RoutePlanner.css";
 
 function RoutePlanner({
   onFindRoute,
-  onGetLocation,
   distance,
   duration,
   safetyScore,
   policeCount = 0,
   hospitalCount = 0,
+  routeAlerts = [],
+  currentLocation,
+  startMode,
 }) {
   const [destination, setDestination] = useState("");
+  const [searchText, setSearchText] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedDestination, setSelectedDestination] = useState(null);
   const [error, setError] = useState("");
 
-  const searchLocation = async (text) => {
-    setDestination(text);
-    setSelectedDestination(null);
-    setError("");
+  const dropdownRef = useRef(null);
 
-    if (text.trim().length < 2) {
+  // Close suggestions when clicking outside the input area
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setSuggestions([]);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  // Debounced search with AbortController to handle rapid typing & race conditions
+  useEffect(() => {
+    const cleanText = searchText.trim();
+
+    if (cleanText.length < 3) {
       setSuggestions([]);
+      setLoading(false);
       return;
     }
 
-    setLoading(true);
+    const controller = new AbortController();
 
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?` +
+    const timer = setTimeout(async () => {
+      setLoading(true);
+      setError("");
+
+      try {
+        const url =
+          "https://nominatim.openstreetmap.org/search?" +
           `format=jsonv2&` +
           `countrycodes=bd&` +
           `addressdetails=1&` +
           `limit=10&` +
-          `q=${encodeURIComponent(text)}`
-      );
+          `q=${encodeURIComponent(cleanText)}`;
 
-      if (!response.ok) {
-        throw new Error("Location search failed");
+        const response = await fetch(url, {
+          signal: controller.signal,
+          headers: {
+            Accept: "application/json",
+            "User-Agent": "SafeRoutePlannerBDApp/1.0",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`Search failed with HTTP status ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!Array.isArray(data) || data.length === 0) {
+          setSuggestions([]);
+          setError("No matching location found in Bangladesh.");
+        } else {
+          setSuggestions(data);
+          setError("");
+        }
+      } catch (searchError) {
+        if (searchError.name !== "AbortError") {
+          console.error("Location search error:", searchError);
+          setSuggestions([]);
+          setError("Location service is temporarily unavailable. Please try again.");
+        }
+      } finally {
+        setLoading(false);
       }
+    }, 600);
 
-      const data = await response.json();
-      setSuggestions(data);
-    } catch (searchError) {
-      console.error(searchError);
-      setSuggestions([]);
-      setError("Unable to search locations right now.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [searchText]);
 
   const handleSelectDestination = (place) => {
     const selectedPlace = {
@@ -61,8 +107,8 @@ function RoutePlanner({
     };
 
     if (
-      Number.isNaN(selectedPlace.lat) ||
-      Number.isNaN(selectedPlace.lng)
+      !Number.isFinite(selectedPlace.lat) ||
+      !Number.isFinite(selectedPlace.lng)
     ) {
       setError("Invalid location coordinates.");
       return;
@@ -70,61 +116,42 @@ function RoutePlanner({
 
     setDestination(place.display_name);
     setSelectedDestination(selectedPlace);
+    setSearchText("");
     setSuggestions([]);
     setError("");
-
-    // Triggers route lookup in parent (which resets old counts to 0)
-    onFindRoute(selectedPlace);
-  };
-
-  const handleCurrentLocation = () => {
-    if (!navigator.geolocation) {
-      setError("Geolocation is not supported by this browser.");
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const location = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        };
-
-        onGetLocation(location);
-        setError("");
-      },
-      (locationError) => {
-        console.error(locationError);
-        setError("Could not access your current location.");
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-      }
-    );
   };
 
   const handleFindRoute = () => {
-    if (!selectedDestination) {
-      setError("Select a destination from the suggestion list.");
+    if (!currentLocation) {
+      setError(
+        startMode === "current"
+          ? "Please use your current location first."
+          : "Please choose a starting location first."
+      );
       return;
     }
 
+    if (!selectedDestination) {
+      setError("Please select a destination from the suggestion list.");
+      return;
+    }
+
+    setError("");
     onFindRoute(selectedDestination);
   };
 
   const formattedDistance =
-    distance !== "" && distance !== null
+    distance !== "" && distance !== null && distance !== undefined
       ? Number(distance).toFixed(2)
       : "--";
 
   const formattedDuration =
-    duration !== "" && duration !== null
+    duration !== "" && duration !== null && duration !== undefined
       ? Math.round(Number(duration))
       : "--";
 
   const formattedSafety =
-    safetyScore !== null && safetyScore !== undefined
+    safetyScore !== null && safetyScore !== undefined && safetyScore !== ""
       ? Math.round(Number(safetyScore))
       : "--";
 
@@ -140,20 +167,7 @@ function RoutePlanner({
           </div>
         </div>
 
-        <div className="route-field">
-          <label>Starting point</label>
-
-          <button
-            type="button"
-            className="location-button"
-            onClick={handleCurrentLocation}
-          >
-            <span>📍</span>
-            Use Current Location
-          </button>
-        </div>
-
-        <div className="route-field destination-field">
+        <div className="route-field destination-field" ref={dropdownRef}>
           <label htmlFor="destination">Destination</label>
 
           <div className="destination-input-wrapper">
@@ -163,16 +177,20 @@ function RoutePlanner({
               id="destination"
               type="text"
               value={destination}
-              onChange={(event) => searchLocation(event.target.value)}
+              onChange={(event) => {
+                const val = event.target.value;
+                setDestination(val);
+                setSearchText(val);
+                setSelectedDestination(null);
+                setError("");
+              }}
               placeholder="Search a place in Bangladesh"
               autoComplete="off"
             />
           </div>
 
           {loading && (
-            <div className="search-status">
-              Searching locations...
-            </div>
+            <div className="search-status">Searching locations...</div>
           )}
 
           {!loading && suggestions.length > 0 && (
@@ -188,8 +206,7 @@ function RoutePlanner({
 
                   <span className="suggestion-text">
                     <strong>
-                      {place.name ||
-                        place.display_name.split(",")[0]}
+                      {place.name || place.display_name.split(",")[0]}
                     </strong>
 
                     <small>{place.display_name}</small>
@@ -206,7 +223,7 @@ function RoutePlanner({
           type="button"
           className="find-route-button"
           onClick={handleFindRoute}
-          disabled={!selectedDestination}
+          disabled={!selectedDestination || !currentLocation}
         >
           Find Safe Route
         </button>
@@ -261,7 +278,7 @@ function RoutePlanner({
                     ? "0%"
                     : `${Math.max(
                         0,
-                        Math.min(100, formattedSafety)
+                        Math.min(100, Number(formattedSafety))
                       )}%`,
               }}
             />
@@ -270,13 +287,16 @@ function RoutePlanner({
           <p>
             {formattedSafety === "--"
               ? "Select a destination to calculate safety."
-              : formattedSafety >= 80
+              : Number(formattedSafety) >= 80
               ? "This route currently appears relatively safe."
-              : formattedSafety >= 50
+              : Number(formattedSafety) >= 50
               ? "Use additional caution on this route."
               : "High caution is recommended on this route."}
           </p>
         </div>
+
+        {/* Displays safety warnings and incident alerts along the calculated route */}
+        <RouteAlerts alerts={routeAlerts || []} />
       </section>
 
       <section className="nearby-section">

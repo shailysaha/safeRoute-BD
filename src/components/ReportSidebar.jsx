@@ -113,6 +113,7 @@ function ReportSidebar({ selectedLocation, setSelectedLocation, onSubmit }) {
         <option>Road Accident</option>
         <option>Poor Lighting</option>
         <option>Flood</option>
+        <option>Fire</option>
         <option>Other</option>
       </select>
 

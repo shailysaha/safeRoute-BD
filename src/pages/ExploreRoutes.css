@@ -1,109 +1,651 @@
-.explore-page{
+/* =========================================
+   EXPLORE ROUTES PAGE
+========================================= */
 
-display:flex;
-
-height:100vh;
-
-background:#eef4fb;
-
-overflow:hidden;
-
-}
-
-.planner-panel{
-
-width:360px;
-
-background:white;
-
-box-shadow:0 10px 30px rgba(0,0,0,.1);
-
-z-index:999;
-
-padding:25px;
-
-overflow-y:auto;
-
-}
-
-.map-panel{
-
-flex:1;
-
-height:100%;
-
-}
 .explore-page {
-    display: flex;
-    height: 100vh;
-    width: 100vw;
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  display: flex;
+
+  width: 100%;
+  height: 100vh;
+
+  margin: 0;
+  padding: 0;
+
+  overflow: hidden;
+
+  background: #eef4fb;
+
+  box-sizing: border-box;
 }
 
 .planner-panel {
-    width: 30%;
-    height: 100%;
-    overflow-y: auto;
-    background: #ffffff;
-    padding: 20px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    z-index: 10;
+  width: 390px;
+  min-width: 390px;
+  height: 100%;
+
+  padding: 18px;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  background: #ffffff;
+
+  border-right: 1px solid #e2e8f0;
+
+  box-shadow:
+    5px 0 25px rgba(15, 23, 42, 0.08);
+
+  z-index: 10;
 }
 
 .map-panel {
-    width: 70%;
-    height: 100%;
-    position: relative;
-}
-.explore-routes-page {
-  display: grid;
-  grid-template-columns: 420px minmax(0, 1fr);
+  flex: 1;
 
-  width: 100%;
-  height: calc(100vh - 70px);
-  overflow: hidden;
+  min-width: 0;
+  height: 100%;
+
+  position: relative;
 
   background: #e2e8f0;
 }
 
-.explore-sidebar {
-  min-width: 0;
-  height: 100%;
-  overflow-y: auto;
-
-  background: #f8fafc;
-  border-right: 1px solid #dbe2ea;
-}
-
-.explore-map {
-  position: relative;
-  min-width: 0;
-  height: 100%;
-}
-
-.explore-map .leaflet-container {
+.map-panel .leaflet-container {
   width: 100%;
   height: 100%;
 }
 
+
+/* =========================================
+   START LOCATION CARD
+========================================= */
+
+.start-location-card {
+  margin-bottom: 16px;
+  padding: 17px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #f8fafc
+    );
+
+  border: 1px solid #e2e8f0;
+  border-radius: 17px;
+
+  box-shadow:
+    0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+.start-location-heading {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: flex-start;
+
+  gap: 12px;
+
+  margin-bottom: 15px;
+}
+
+.start-label {
+  display: block;
+
+  margin-bottom: 4px;
+
+  color: #10b981;
+
+  font-size: 9px;
+  font-weight: 900;
+
+  letter-spacing: 1.2px;
+}
+
+.start-location-heading h3 {
+  margin: 0;
+
+  color: #0f172a;
+
+  font-size: 18px;
+}
+
+.start-location-heading p {
+  margin: 4px 0 0;
+
+  max-width: 245px;
+
+  color: #64748b;
+
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.start-location-icon {
+  width: 40px;
+  height: 40px;
+
+  display: grid;
+  place-items: center;
+
+  flex-shrink: 0;
+
+  background: #ecfdf5;
+
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+
+  font-size: 18px;
+}
+
+
+/* =========================================
+   MODE BUTTONS
+========================================= */
+
+.start-mode-tabs {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 9px;
+}
+
+.start-mode-button {
+  min-width: 0;
+  min-height: 62px;
+
+  padding: 9px 10px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  text-align: left;
+
+  color: #475569;
+
+  background: #f8fafc;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.start-mode-button:hover {
+  transform: translateY(-1px);
+
+  border-color: #6ee7b7;
+}
+
+.start-mode-button > span {
+  width: 34px;
+  height: 34px;
+
+  display: grid;
+  place-items: center;
+
+  flex-shrink: 0;
+
+  background: #ffffff;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
+
+  font-size: 15px;
+}
+
+.start-mode-button > div {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+.start-mode-button strong {
+  color: #334155;
+
+  font-size: 11px;
+}
+
+.start-mode-button small {
+  color: #94a3b8;
+
+  font-size: 9px;
+}
+
+.start-mode-active {
+  background: #ecfdf5;
+
+  border-color: #10b981;
+
+  box-shadow:
+    0 0 0 3px rgba(16, 185, 129, 0.08);
+}
+
+.start-mode-active strong {
+  color: #047857;
+}
+
+.start-mode-active > span {
+  background: #d1fae5;
+
+  border-color: #6ee7b7;
+}
+
+
+/* =========================================
+   MODE CONTENT
+========================================= */
+
+.start-mode-content {
+  margin-top: 13px;
+}
+
+.detect-location-button {
+  width: 100%;
+
+  min-height: 45px;
+
+  padding: 0 14px;
+
+  color: #047857;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ecfdf5,
+      #d1fae5
+    );
+
+  border: 1px solid #6ee7b7;
+  border-radius: 11px;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.detect-location-button:hover {
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 8px 18px rgba(16, 185, 129, 0.15);
+}
+
+
+/* =========================================
+   SELECTED START
+========================================= */
+
+.selected-start-box {
+  padding: 11px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  background: #f0fdf4;
+
+  border: 1px solid #bbf7d0;
+  border-radius: 11px;
+}
+
+.manual-selected {
+  margin-top: 10px;
+}
+
+.selected-start-pin {
+  width: 33px;
+  height: 33px;
+
+  display: grid;
+  place-items: center;
+
+  flex-shrink: 0;
+
+  background: #dcfce7;
+
+  border-radius: 9px;
+}
+
+.selected-start-box > div {
+  min-width: 0;
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+.selected-start-box small {
+  color: #64748b;
+
+  font-size: 9px;
+}
+
+.selected-start-box strong {
+  overflow: hidden;
+
+  color: #166534;
+
+  font-size: 11px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.selected-start-box div > span {
+  color: #94a3b8;
+
+  font-size: 8px;
+}
+
+.selected-check {
+  width: 24px;
+  height: 24px;
+
+  display: grid;
+  place-items: center;
+
+  flex-shrink: 0;
+
+  color: #ffffff;
+
+  background: #10b981;
+
+  border-radius: 50%;
+
+  font-size: 11px;
+  font-weight: 900;
+}
+
+
+/* =========================================
+   MANUAL SEARCH
+========================================= */
+
+.manual-search-title {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 2px;
+
+  margin-bottom: 8px;
+}
+
+.manual-search-title strong {
+  color: #334155;
+
+  font-size: 11px;
+}
+
+.manual-search-title small {
+  color: #94a3b8;
+
+  font-size: 9px;
+}
+
+
+/* =========================================
+   LOCATION LOADING
+========================================= */
+
+.location-loading {
+  min-height: 44px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 9px;
+
+  color: #64748b;
+
+  background: #f8fafc;
+
+  border-radius: 10px;
+
+  font-size: 10px;
+}
+
+.location-spinner {
+  width: 15px;
+  height: 15px;
+
+  border: 2px solid #d1fae5;
+  border-top-color: #10b981;
+
+  border-radius: 50%;
+
+  animation:
+    locationSpin 0.7s linear infinite;
+}
+
+@keyframes locationSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* =========================================
+   LOCATION ERROR
+========================================= */
+
+.start-location-error {
+  margin: 10px 0 0;
+
+  padding: 8px 10px;
+
+  color: #b91c1c;
+
+  background: #fef2f2;
+
+  border: 1px solid #fecaca;
+  border-radius: 9px;
+
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+
+/* =========================================
+   DARK MODE
+========================================= */
+
+body.dark-mode .explore-page {
+  background: #0f172a;
+
+  color: #f8fafc;
+}
+
+body.dark-mode .planner-panel {
+  background: #111827;
+
+  border-right-color: #263244;
+
+  box-shadow:
+    4px 0 28px rgba(0, 0, 0, 0.34);
+}
+
+body.dark-mode .map-panel {
+  background: #0f172a;
+}
+
+body.dark-mode .start-location-card {
+  background:
+    linear-gradient(
+      145deg,
+      #1e293b,
+      #172033
+    );
+
+  border-color: #334155;
+
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+body.dark-mode
+.start-location-heading h3 {
+  color: #f8fafc;
+}
+
+body.dark-mode
+.start-location-heading p {
+  color: #94a3b8;
+}
+
+body.dark-mode
+.start-location-icon {
+  background:
+    rgba(16, 185, 129, 0.1);
+
+  border-color:
+    rgba(16, 185, 129, 0.3);
+}
+
+body.dark-mode
+.start-mode-button {
+  color: #cbd5e1;
+
+  background: #111827;
+
+  border-color: #334155;
+}
+
+body.dark-mode
+.start-mode-button > span {
+  background: #1e293b;
+
+  border-color: #334155;
+}
+
+body.dark-mode
+.start-mode-button strong {
+  color: #e2e8f0;
+}
+
+body.dark-mode
+.start-mode-active {
+  background:
+    rgba(16, 185, 129, 0.1);
+
+  border-color: #10b981;
+}
+
+body.dark-mode
+.start-mode-active strong {
+  color: #6ee7b7;
+}
+
+body.dark-mode
+.start-mode-active > span {
+  background:
+    rgba(16, 185, 129, 0.15);
+
+  border-color:
+    rgba(16, 185, 129, 0.4);
+}
+
+body.dark-mode
+.selected-start-box {
+  background:
+    rgba(16, 185, 129, 0.08);
+
+  border-color:
+    rgba(16, 185, 129, 0.3);
+}
+
+body.dark-mode
+.selected-start-pin {
+  background:
+    rgba(16, 185, 129, 0.13);
+}
+
+body.dark-mode
+.selected-start-box strong {
+  color: #6ee7b7;
+}
+
+body.dark-mode
+.manual-search-title strong {
+  color: #e2e8f0;
+}
+
+body.dark-mode
+.location-loading {
+  color: #94a3b8;
+
+  background: #111827;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
 @media (max-width: 900px) {
-  .explore-routes-page {
-    display: flex;
+  .explore-page {
     height: auto;
     min-height: 100vh;
+
     flex-direction: column;
+
+    overflow: visible;
   }
 
-  .explore-sidebar {
+  .planner-panel {
     width: 100%;
+    min-width: 0;
     height: auto;
-    max-height: none;
+
+    overflow: visible;
+
+    border-right: none;
+    border-bottom: 1px solid #e2e8f0;
   }
 
-  .explore-map {
+  .map-panel {
     width: 100%;
     height: 65vh;
+
+    min-height: 500px;
+  }
+}
+
+@media (max-width: 480px) {
+  .planner-panel {
+    padding: 12px;
+  }
+
+  .start-location-card {
+    padding: 14px;
+  }
+
+  .start-mode-tabs {
+    grid-template-columns: 1fr;
   }
 }

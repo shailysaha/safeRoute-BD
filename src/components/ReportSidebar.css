@@ -45,3 +45,44 @@ color:white;
 color:#9ca3af;
 margin-bottom:25px;
 }
+body.dark-mode .report-panel,
+body.dark-mode .sidebar {
+  background: #1e293b;
+  color: #f8fafc;
+}
+
+body.dark-mode .sidebar h2,
+body.dark-mode .report-heading h2 {
+  color: #f8fafc;
+}
+
+body.dark-mode .report-subtitle {
+  color: #94a3b8;
+}
+
+body.dark-mode .sidebar input,
+body.dark-mode .sidebar select,
+body.dark-mode .sidebar textarea {
+  background: #111827;
+  color: #f8fafc;
+  border-color: #475569;
+}
+
+body.dark-mode .sidebar input::placeholder,
+body.dark-mode .sidebar textarea::placeholder {
+  color: #94a3b8;
+}
+
+body.dark-mode .sidebar input:disabled {
+  background: #172033;
+  color: #cbd5e1;
+}
+
+body.dark-mode .sidebar select option {
+  color: #f8fafc;
+  background: #111827;
+}
+
+body.dark-mode .sidebar hr {
+  background: #334155;
+}

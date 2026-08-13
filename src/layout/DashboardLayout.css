@@ -17,3 +17,43 @@ padding:25px;
 overflow:auto;
 background:#0f172a;
 }
+.dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.dashboard-main {
+  flex: 1;
+  min-width: 0;
+  min-height: 100vh;
+  background: #f1f5f9;
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
+}
+
+.dashboard-topbar {
+  height: 82px;
+  padding: 0 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background: #1e293b;
+  color: white;
+}
+
+/* Dark mode */
+body.dark-mode .dashboard-layout,
+body.dark-mode .dashboard-main {
+  background: #0f172a;
+  color: #f8fafc;
+}
+
+body.dark-mode .dashboard-topbar {
+  background: #111827;
+  color: #f8fafc;
+}

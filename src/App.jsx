@@ -8,8 +8,11 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Admin from "./pages/Admin";
 import ExploreRoutes from "./pages/ExploreRoutes";
+import Profile from "./pages/Profile";
+import MyReports from "./pages/MyReports";
 
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminRoute from "./components/AdminRoute";
 
 function App() {
   return (
@@ -43,11 +46,30 @@ function App() {
         />
 
         <Route
-          path="/admin"
+          path="/my-reports"
           element={
             <ProtectedRoute>
-              <Admin />
+              <MyReports />
             </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Admin Route */}
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <Admin />
+            </AdminRoute>
           }
         />
       </Routes>

@@ -1,50 +1,269 @@
-.search-box{
-    position:relative;
-    margin-bottom:20px;
+.search-box {
+  position: relative;
+  width: 100%;
 }
 
-.search-box input{
-
-    width:100%;
-    padding:12px;
-
-    border-radius:10px;
-    border:1px solid #ddd;
-
-    font-size:15px;
+.search-input-wrapper {
+  position: relative;
+  width: 100%;
 }
 
-.search-results{
+.search-location-icon {
+  position: absolute;
+  top: 50%;
+  left: 13px;
 
-    position:absolute;
+  transform: translateY(-50%);
 
-    width:100%;
+  font-size: 14px;
 
-    background:white;
-
-    border-radius:10px;
-
-    margin-top:5px;
-
-    box-shadow:0 5px 20px rgba(0,0,0,.2);
-
-    max-height:250px;
-
-    overflow-y:auto;
-
-    z-index:999;
+  pointer-events: none;
 }
 
-.search-item{
+.search-box input {
+  width: 100%;
+  height: 46px;
 
-    padding:12px;
+  padding:
+    0
+    38px
+    0
+    39px;
 
-    cursor:pointer;
+  color: #0f172a;
+  background: #ffffff;
 
-    transition:.3s;
+  border: 1px solid #cbd5e1;
+  border-radius: 11px;
+
+  font-size: 12px;
+
+  outline: none;
+  box-sizing: border-box;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-.search-item:hover{
+.search-box input:focus {
+  border-color: #10b981;
 
-    background:#eef4ff;
+  box-shadow:
+    0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.search-box input::placeholder {
+  color: #94a3b8;
+}
+
+.clear-location-search {
+  position: absolute;
+  top: 50%;
+  right: 9px;
+
+  width: 27px;
+  height: 27px;
+
+  transform: translateY(-50%);
+
+  display: grid;
+  place-items: center;
+
+  color: #64748b;
+  background: #f1f5f9;
+
+  border: none;
+  border-radius: 50%;
+
+  font-size: 17px;
+
+  cursor: pointer;
+}
+
+.clear-location-search:hover {
+  color: #0f172a;
+  background: #e2e8f0;
+}
+
+/* Status */
+
+.location-search-status {
+  margin-top: 7px;
+
+  color: #64748b;
+
+  font-size: 10px;
+}
+
+/* Dropdown */
+
+.search-results {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+
+  z-index: 6000;
+
+  max-height: 280px;
+
+  overflow-y: auto;
+
+  background: #ffffff;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+
+  box-shadow:
+    0 16px 35px rgba(15, 23, 42, 0.18);
+}
+
+.search-item {
+  width: 100%;
+
+  padding: 11px 12px;
+
+  display: flex;
+  align-items: flex-start;
+
+  gap: 9px;
+
+  text-align: left;
+
+  color: #0f172a;
+  background: #ffffff;
+
+  border: none;
+  border-bottom: 1px solid #f1f5f9;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease;
+}
+
+.search-item:last-child {
+  border-bottom: none;
+}
+
+.search-item:hover {
+  background: #ecfdf5;
+}
+
+.search-result-pin {
+  flex-shrink: 0;
+
+  margin-top: 2px;
+
+  font-size: 14px;
+}
+
+.search-result-text {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.search-result-text strong {
+  color: #0f172a;
+
+  font-size: 11px;
+}
+
+.search-result-text small {
+  color: #64748b;
+
+  font-size: 9px;
+  line-height: 1.45;
+}
+
+.location-search-error {
+  margin: 7px 0 0;
+
+  color: #ebdede;
+
+  font-size: 9px;
+}
+
+/* =============================
+   DARK MODE
+============================= */
+
+body.dark-mode .search-box input {
+  color: #f8fafc;
+
+  background: #111827;
+
+  border-color: #475569;
+}
+
+body.dark-mode
+.search-box input::placeholder {
+  color: #94a3b8;
+}
+
+body.dark-mode
+.search-box input:focus {
+  border-color: #10b981;
+
+  box-shadow:
+    0 0 0 3px rgba(16, 185, 129, 0.12);
+}
+
+body.dark-mode
+.clear-location-search {
+  color: #cbd5e1;
+
+  background: #334155;
+}
+
+body.dark-mode
+.clear-location-search:hover {
+  color: #ffffff;
+
+  background: #475569;
+}
+
+body.dark-mode
+.location-search-status {
+  color: #94a3b8;
+}
+
+body.dark-mode
+.search-results {
+  background: #1e293b;
+
+  border-color: #475569;  
+
+  box-shadow:
+    0 16px 35px rgba(0, 0, 0, 0.35);
+}
+
+body.dark-mode
+.search-item {
+  color: #f8fafc;
+
+  background: #1e293b;
+
+  border-bottom-color: #334155;
+}
+
+body.dark-mode
+.search-item:hover {
+  background:
+    rgba(16, 185, 129, 0.1);
+}
+
+body.dark-mode
+.search-result-text strong {
+  color: #f8fafc;
+}
+
+body.dark-mode
+.search-result-text small {
+  color: #94a3b8;
 }

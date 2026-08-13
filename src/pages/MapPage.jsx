@@ -10,7 +10,12 @@ import {
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
-import { collection, addDoc, getDocs } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  serverTimestamp,
+} from "firebase/firestore";
 import { auth, db } from "../firebase/firebase";
 
 import DashboardLayout from "../layout/DashboardLayout";
@@ -39,7 +44,13 @@ function ClickHandler({ onMapClick }) {
 
       try {
         const response = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`,
+          {
+            headers: {
+              Accept: "application/json",
+              "User-Agent": "SafeRoutePlannerBDApp/1.0",
+            },
+          }
         );
 
         const data = await response.json();
@@ -51,18 +62,22 @@ function ClickHandler({ onMapClick }) {
           area:
             address.suburb ||
             address.neighbourhood ||
+            address.quarter ||
+            address.road ||
             address.village ||
             address.town ||
+            address.hamlet ||
             "",
           district:
             address.city ||
             address.county ||
             address.state_district ||
+            address.state ||
             "",
           name: data.display_name || "Clicked Location",
         });
       } catch (error) {
-        console.error(error);
+        console.error("Reverse geocoding error:", error);
 
         onMapClick({
           lat,
@@ -126,7 +141,7 @@ function MapPage({ hideSidebar = false }) {
 
       setReports(firebaseReports);
     } catch (error) {
-      console.error(error);
+      console.error("Error loading reports:", error);
     }
   };
 
@@ -153,23 +168,23 @@ function MapPage({ hideSidebar = false }) {
       return false;
     }
 
+    // Construct report object ensuring userId & metadata are always attached
     const newReport = {
       ...report,
       lat: Number(selectedLocation.lat),
       lng: Number(selectedLocation.lng),
-      area: selectedLocation.area || report.area,
-      district: selectedLocation.district || report.district,
+      area: selectedLocation.area || report.area || "",
+      district: selectedLocation.district || report.district || "",
       userId: currentUser.uid,
       userEmail: currentUser.email || "",
+      status: "active",
       createdAt: new Date().toISOString(),
     };
 
     try {
-      const docRef = await addDoc(
-        collection(db, "reports"),
-        newReport
-      );
+      const docRef = await addDoc(collection(db, "reports"), newReport);
 
+      // Local state update for immediate UI reflection
       const savedReport = {
         id: docRef.id,
         ...newReport,
@@ -235,21 +250,21 @@ function MapPage({ hideSidebar = false }) {
     }
 
     const emergency = {
-      lat: selectedLocation.lat,
-      lng: selectedLocation.lng,
-      area: selectedLocation.area,
-      district: selectedLocation.district,
+      lat: Number(selectedLocation.lat),
+      lng: Number(selectedLocation.lng),
+      area: selectedLocation.area || "",
+      district: selectedLocation.district || "",
       userId: currentUser.uid,
-      userEmail: currentUser.email,
+      userEmail: currentUser.email || "",
       status: "ACTIVE",
-      createdAt: new Date().toISOString(),
+      createdAt: serverTimestamp(),
     };
 
     try {
       await addDoc(collection(db, "emergencyAlerts"), emergency);
       alert("🚨 SOS Alert Sent Successfully!");
     } catch (error) {
-      console.error(error);
+      console.error("SOS Error:", error);
       alert("Failed to send SOS.");
     }
   };
@@ -331,7 +346,7 @@ function MapPage({ hideSidebar = false }) {
               </Marker>
             ))}
 
-            {/* Highlighted selection marker with validation and popup */}
+            {/* Highlighted selection marker */}
             {selectedLocation &&
               !isNaN(selectedLocation.lat) &&
               !isNaN(selectedLocation.lng) && (

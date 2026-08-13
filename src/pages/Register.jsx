@@ -14,7 +14,8 @@ import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
 } from "firebase/auth";
-import { auth } from "../firebase/firebase";
+import { doc, setDoc } from "firebase/firestore";
+import { auth, db } from "../firebase/firebase";
 
 function Register() {
   const navigate = useNavigate();
@@ -55,12 +56,22 @@ function Register() {
     }
 
     try {
+      // 1. Create auth user
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
 
+      // 2. Save user profile data in Firestore (Always default to "user")
+      await setDoc(doc(db, "users", userCredential.user.uid), {
+        name: fullName,
+        email: userCredential.user.email,
+        role: "user",
+        createdAt: new Date().toISOString(),
+      });
+
+      // 3. Send email verification
       await sendEmailVerification(userCredential.user);
 
       alert(

@@ -1,38 +1,335 @@
-.reports-page{
-    padding:30px;
-    min-height:100vh;
-    background:#0f172a;
+.reports-page {
+  min-height: 100vh;
+  padding: 32px;
+  background: #f4f7fb;
+  color: #0f172a;
+  box-sizing: border-box;
 }
 
-.reports-page h1{
-    color:white;
-    margin-bottom:25px;
+.reports-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 25px;
 }
 
-.reports-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
-    gap:20px;
+.reports-header h1 {
+  margin: 0;
+  font-size: 32px;
 }
 
-.report-card{
-    background:#1e293b;
-    color:white;
-    padding:20px;
-    border-radius:18px;
-    box-shadow:0 10px 25px rgba(0,0,0,.3);
-    transition:.3s;
+.reports-header p {
+  margin: 8px 0 0;
+  color: #64748b;
 }
 
-.report-card:hover{
-    transform:translateY(-5px);
+.refresh-reports-btn {
+  padding: 12px 18px;
+  color: white;
+  background: #2563eb;
+  border: none;
+  border-radius: 11px;
+  font-weight: 700;
+  cursor: pointer;
 }
 
-.report-card h3{
-    color:#38bdf8;
-    margin-bottom:12px;
+.report-search-section {
+  position: relative;
+  max-width: 650px;
+  margin-bottom: 14px;
 }
 
-.report-card p{
-    margin:8px 0;
+.report-search-section input {
+  width: 100%;
+  height: 52px;
+  padding: 0 50px 0 46px;
+  border: 1px solid #d5deea;
+  border-radius: 14px;
+  background: white;
+  font-size: 15px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.report-search-section input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+.report-search-icon {
+  position: absolute;
+  top: 50%;
+  left: 16px;
+  transform: translateY(-50%);
+}
+
+.clear-report-search {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+
+  width: 30px;
+  height: 30px;
+
+  border: none;
+  border-radius: 50%;
+  background: #eef2f7;
+  cursor: pointer;
+}
+
+.report-result-summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 22px;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.reports-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.report-card {
+  padding: 22px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+
+  box-shadow: 0 9px 25px rgba(15, 23, 42, 0.07);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.report-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 35px rgba(15, 23, 42, 0.12);
+}
+
+.report-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.report-card h3 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.report-district {
+  margin: 5px 0 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.severity-badge {
+  flex-shrink: 0;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.severity-high {
+  color: #b91c1c;
+  background: #fee2e2;
+}
+
+.severity-medium {
+  color: #b45309;
+  background: #fef3c7;
+}
+
+.severity-low {
+  color: #15803d;
+  background: #dcfce7;
+}
+
+.severity-unknown {
+  color: #475569;
+  background: #e2e8f0;
+}
+
+.report-danger-type {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0 14px;
+  padding: 12px;
+  background: #f8fafc;
+  border-radius: 12px;
+}
+
+.report-danger-type div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.report-danger-type small {
+  color: #64748b;
+}
+
+.report-description {
+  min-height: 44px;
+  color: #475569;
+  line-height: 1.6;
+}
+
+.report-time {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
+  padding-top: 15px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.report-time div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.report-time strong {
+  color: #2563eb;
+  font-size: 13px;
+}
+
+.report-time small {
+  color: #64748b;
+  font-size: 11px;
+}
+
+.reports-message {
+  padding: 60px 20px;
+  text-align: center;
+  background: white;
+  border-radius: 18px;
+}
+
+.reports-message span {
+  font-size: 40px;
+}
+
+@media (max-width: 700px) {
+  .reports-page {
+    padding: 18px 12px;
+  }
+
+  .reports-header {
+    flex-direction: column;
+  }
+
+  .refresh-reports-btn {
+    width: 100%;
+  }
+
+  .report-result-summary {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .reports-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* =========================
+   DARK MODE - REPORTS PAGE
+========================= */
+
+body.dark-mode .reports-page {
+  background: #0f172a;
+  color: #f8fafc;
+}
+
+body.dark-mode .reports-header h1 {
+  color: #f8fafc;
+}
+
+body.dark-mode .reports-header p,
+body.dark-mode .report-result-summary {
+  color: #94a3b8;
+}
+
+/* Search field */
+body.dark-mode .report-search-section input {
+  background: #1e293b;
+  color: #f8fafc;
+  border-color: #475569;
+}
+
+body.dark-mode .report-search-section input::placeholder {
+  color: #94a3b8;
+}
+
+body.dark-mode .clear-report-search {
+  background: #334155;
+  color: #f8fafc;
+}
+
+/* Report cards */
+body.dark-mode .report-card {
+  background: #1e293b;
+  border-color: #334155;
+  color: #f8fafc;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .report-card h3 {
+  color: #f8fafc;
+}
+
+body.dark-mode .report-district,
+body.dark-mode .report-description {
+  color: #cbd5e1;
+}
+
+/* Danger information box */
+body.dark-mode .report-danger-type {
+  background: #111827;
+  color: #f8fafc;
+}
+
+body.dark-mode .report-danger-type small {
+  color: #94a3b8;
+}
+
+body.dark-mode .report-danger-type strong {
+  color: #f8fafc;
+}
+
+/* Time section */
+body.dark-mode .report-time {
+  border-top-color: #334155;
+}
+
+body.dark-mode .report-time strong {
+  color: #60a5fa;
+}
+
+body.dark-mode .report-time small {
+  color: #94a3b8;
+}
+
+/* Empty/loading message */
+body.dark-mode .reports-message {
+  background: #1e293b;
+  color: #f8fafc;
+}
+
+body.dark-mode .reports-message h3 {
+  color: #f8fafc;
+}
+
+body.dark-mode .reports-message p {
+  color: #94a3b8;
 }

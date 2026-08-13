@@ -1,0 +1,289 @@
+/* =========================================
+   BASE INCIDENT & ALERT STYLES
+========================================= */
+
+.incident-group {
+  margin-top: 14px;
+}
+
+.incident-group-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.incident-group-title strong {
+  margin-left: auto;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #e2e8f0;
+}
+
+.status-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+
+.active-dot {
+  background: #ef4444;
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.14);
+}
+
+.historical-dot {
+  background: #94a3b8;
+}
+
+.alert-badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.active-status {
+  color: #b91c1c;
+  background: #fee2e2;
+}
+
+.historical-status {
+  color: #475569;
+  background: #e2e8f0;
+}
+
+.active-alert {
+  background: #fff7ed;
+  border-color: #fed7aa;
+}
+
+.historical-alert {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  opacity: 0.88;
+}
+
+.incident-advice {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 10px;
+  padding: 10px;
+  color: #92400e;
+  background: #fffbeb;
+  border-radius: 9px;
+}
+
+.incident-advice strong {
+  font-size: 12px;
+}
+
+.incident-advice span {
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.historical-note {
+  margin-top: 10px;
+  padding: 9px;
+  color: #475569;
+  background: #e2e8f0;
+  border-radius: 9px;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.recommendation-info {
+  color: #1e40af;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+}
+
+.recommendation-content {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.route-suggestion {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin-top: 9px;
+  padding: 10px;
+  color: #1e40af;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(37, 99, 235, 0.18);
+  border-radius: 10px;
+}
+
+.route-suggestion > span {
+  flex-shrink: 0;
+  font-size: 17px;
+}
+
+.route-suggestion div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.route-suggestion small {
+  color: inherit;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.route-suggestion p {
+  margin: 0;
+  color: inherit;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.recommendation-danger .route-suggestion {
+  color: #991b1b;
+  border-color: #fecaca;
+}
+
+.recommendation-warning .route-suggestion {
+  color: #92400e;
+  border-color: #fde68a;
+}
+
+
+/* =========================================
+   DARK MODE - ROUTE ALERTS & INCIDENTS
+========================================= */
+
+body.dark-mode .route-alerts {
+  color: #f8fafc;
+}
+
+body.dark-mode .incident-group-title {
+  color: #e2e8f0;
+}
+
+body.dark-mode .incident-group-title strong {
+  color: #e2e8f0;
+  background: #334155;
+}
+
+/* Alert cards & containers */
+body.dark-mode .route-alert-card,
+body.dark-mode .active-report-card {
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #f8fafc;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+body.dark-mode .active-alert {
+  background: #2a1b12;
+  border-color: #7c2d12;
+}
+
+body.dark-mode .historical-alert,
+body.dark-mode .historical-report,
+body.dark-mode .historical-card {
+  background: #182235;
+  border-color: #334155;
+  color: #cbd5e1;
+}
+
+/* Card Typography */
+body.dark-mode .route-alert-card p,
+body.dark-mode .route-alert-card strong,
+body.dark-mode .alert-card-top strong {
+  color: #f8fafc;
+}
+
+/* Severity Badges */
+body.dark-mode .alert-low {
+  background: #14532d;
+  color: #86efac;
+}
+
+body.dark-mode .alert-medium {
+  background: #78350f;
+  color: #fde68a;
+}
+
+body.dark-mode .alert-high {
+  background: #7f1d1d;
+  color: #fecaca;
+}
+
+/* Report Status Badges */
+body.dark-mode .report-status-recent,
+body.dark-mode .status-recent {
+  background: #7f1d1d;
+  color: #fecaca;
+}
+
+body.dark-mode .report-status-historical,
+body.dark-mode .status-historical {
+  background: #334155;
+  color: #cbd5e1;
+}
+
+/* Advice & Notes */
+body.dark-mode .incident-advice {
+  color: #fcd34d;
+  background: #35280e;
+}
+
+body.dark-mode .historical-note {
+  color: #cbd5e1;
+  background: #334155;
+}
+
+/* Recommendations & Route Suggestions */
+body.dark-mode .route-suggestion {
+  background: rgba(15, 23, 42, 0.5);
+  color: #93c5fd;
+  border-color: #1e3a8a;
+}
+
+body.dark-mode .route-recommendation,
+body.dark-mode .alert-recommendation {
+  background: #111827;
+  border: 1px solid #334155;
+  color: #e2e8f0;
+}
+
+body.dark-mode .route-recommendation small {
+  color: #94a3b8;
+}
+
+body.dark-mode .route-recommendation strong {
+  color: #f8fafc;
+}
+
+body.dark-mode .route-recommendation p {
+  color: #cbd5e1;
+}
+
+/* Section Headers & Safe State */
+body.dark-mode .route-safe-message {
+  background: #163220;
+  border-color: #166534;
+  color: #bbf7d0;
+}
+
+body.dark-mode .active-reports-header,
+body.dark-mode .historical-reports-header {
+  color: #e2e8f0;
+}

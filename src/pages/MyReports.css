@@ -1,0 +1,259 @@
+.my-reports-page {
+  min-height: 100vh;
+  padding: 30px;
+  box-sizing: border-box;
+  background: #f4f7fb;
+  color: #0f172a;
+}
+
+.my-reports-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.my-reports-header h1 {
+  margin: 0;
+  font-size: 32px;
+}
+
+.my-reports-header p {
+  margin: 7px 0 0;
+  color: #64748b;
+}
+
+.reload-my-reports {
+  padding: 12px 18px;
+  color: white;
+  background: #2563eb;
+  border: none;
+  border-radius: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.my-reports-count {
+  margin-bottom: 20px;
+  padding: 13px 16px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+.my-reports-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.my-report-card {
+  padding: 21px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.07);
+}
+
+.my-report-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.my-report-card-top h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.my-report-card-top p {
+  margin: 5px 0 0;
+  color: #64748b;
+}
+
+.my-severity {
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.my-severity-high {
+  color: #b91c1c;
+  background: #fee2e2;
+}
+
+.my-severity-medium {
+  color: #b45309;
+  background: #fef3c7;
+}
+
+.my-severity-low {
+  color: #15803d;
+  background: #dcfce7;
+}
+
+.my-report-danger {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 18px 0 13px;
+  padding: 13px;
+  background: #f8fafc;
+  border-radius: 12px;
+}
+
+.my-report-danger small,
+.my-report-meta {
+  color: #64748b;
+}
+
+.my-report-description {
+  min-height: 48px;
+  color: #475569;
+  line-height: 1.6;
+}
+
+.my-report-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-top: 14px;
+  border-top: 1px solid #e2e8f0;
+  font-size: 12px;
+}
+
+.my-report-actions,
+.my-report-edit-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 17px;
+}
+
+.my-report-actions button,
+.my-report-edit-actions button {
+  flex: 1;
+  padding: 11px 14px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.edit-report-button,
+.save-report-button {
+  color: white;
+  background: #2563eb;
+}
+
+.delete-report-button {
+  color: white;
+  background: #dc2626;
+}
+
+.cancel-report-button {
+  color: #334155;
+  background: #e2e8f0;
+}
+
+.my-report-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.my-report-edit-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.my-report-edit-form select,
+.my-report-edit-form textarea {
+  width: 100%;
+  padding: 12px;
+  box-sizing: border-box;
+
+  background: white;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font: inherit;
+}
+
+.my-report-edit-form textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.my-reports-message {
+  padding: 55px 20px;
+  text-align: center;
+  background: white;
+  border-radius: 18px;
+}
+
+.my-reports-message > span {
+  font-size: 42px;
+}
+
+@media (max-width: 700px) {
+  .my-reports-page {
+    padding: 18px 12px;
+  }
+
+  .my-reports-header {
+    flex-direction: column;
+  }
+
+  .reload-my-reports {
+    width: 100%;
+  }
+
+  .my-reports-grid {
+    grid-template-columns: 1fr;
+  }
+}
+body.dark-mode .my-reports-page {
+  background: #0f172a;
+  color: #f8fafc;
+}
+
+body.dark-mode .my-reports-header h1,
+body.dark-mode .my-reports-message h2,
+body.dark-mode .my-report-card h2 {
+  color: #f8fafc;
+}
+
+body.dark-mode .my-reports-header p,
+body.dark-mode .my-reports-count,
+body.dark-mode .my-report-card-top p,
+body.dark-mode .my-report-description,
+body.dark-mode .my-report-meta {
+  color: #94a3b8;
+}
+
+body.dark-mode .my-reports-count,
+body.dark-mode .my-reports-message,
+body.dark-mode .my-report-card {
+  background: #1e293b;
+  border-color: #334155;
+  color: #f8fafc;
+}
+
+body.dark-mode .my-report-danger {
+  background: #111827;
+}
+
+body.dark-mode .my-report-edit-form select,
+body.dark-mode .my-report-edit-form textarea {
+  background: #111827;
+  color: #f8fafc;
+  border-color: #475569;
+}

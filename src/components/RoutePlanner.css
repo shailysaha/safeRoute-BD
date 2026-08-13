@@ -76,34 +76,9 @@
   font-weight: 700;
 }
 
-.location-button {
-  display: flex;
-  width: 100%;
-  min-height: 48px;
 
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
 
-  color: #1d4ed8;
-  background: #eff6ff;
 
-  border: 1px solid #bfdbfe;
-  border-radius: 12px;
-
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-
-  transition:
-    transform 0.2s ease,
-    background 0.2s ease;
-}
-
-.location-button:hover {
-  background: #dbeafe;
-  transform: translateY(-1px);
-}
 
 .destination-field {
   position: relative;
@@ -426,4 +401,96 @@
   .nearby-grid {
     grid-template-columns: 1fr;
   }
+}
+body.dark-mode .route-sidebar {
+  background: #111827;
+  color: #f8fafc;
+}
+
+body.dark-mode .planner-section,
+body.dark-mode .route-summary-section,
+body.dark-mode .nearby-section {
+  background: #1e293b;
+  border-color: #334155;
+  color: #f8fafc;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+}
+
+body.dark-mode .section-heading h2,
+body.dark-mode .summary-heading h3,
+body.dark-mode .nearby-section h3,
+body.dark-mode .route-field label,
+body.dark-mode .summary-card strong,
+body.dark-mode .nearby-card strong {
+  color: #f8fafc;
+}
+
+body.dark-mode .section-heading p,
+body.dark-mode .summary-heading p,
+body.dark-mode .nearby-section p,
+body.dark-mode .summary-card small,
+body.dark-mode .nearby-card small {
+  color: #94a3b8;
+}
+
+
+body.dark-mode .destination-input-wrapper input {
+  color: #f8fafc;
+  background: #1e293b;
+  border-color: #475569;
+}
+
+body.dark-mode .destination-input-wrapper input::placeholder {
+  color: #94a3b8;
+}
+
+body.dark-mode .destination-suggestions {
+  background: #1e293b;
+  border-color: #475569;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+}
+
+body.dark-mode .destination-suggestion {
+  color: #f8fafc;
+  background: #1e293b;
+  border-bottom-color: #334155;
+}
+
+body.dark-mode .destination-suggestion:hover {
+  background: #334155;
+}
+
+body.dark-mode .destination-suggestion small {
+  color: #94a3b8;
+}
+
+body.dark-mode .find-route-button:disabled {
+  color: #94a3b8;
+  background: #334155;
+}
+
+body.dark-mode .route-summary-grid .summary-card,
+body.dark-mode .nearby-card {
+  background: #111827;
+  border-color: #334155;
+}
+
+body.dark-mode .safety-card {
+  color: #dcfce7;
+  background: #163220;
+  border-color: #166534;
+}
+
+body.dark-mode .safety-card small,
+body.dark-mode .safety-card p {
+  color: #bbf7d0;
+}
+
+body.dark-mode .safety-progress {
+  background: #14532d;
+}
+
+body.dark-mode .live-badge {
+  color: #86efac;
+  background: #14532d;
 }

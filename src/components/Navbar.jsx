@@ -1,37 +1,97 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { onAuthStateChanged, signOut } from "firebase/auth";
-import { auth } from "../firebase/firebase";
+import {
+  Link,
+  NavLink,
+  useNavigate,
+} from "react-router-dom";
+
+import {
+  onAuthStateChanged,
+  signOut,
+} from "firebase/auth";
+
+import {
+  doc,
+  getDoc,
+} from "firebase/firestore";
+
 import {
   FaShieldAlt,
   FaMoon,
   FaSun,
   FaBars,
   FaTimes,
+  FaUser,
 } from "react-icons/fa";
 
+import { auth, db } from "../firebase/firebase";
 import "./Navbar.css";
 
 function Navbar() {
-  const location = useLocation();
   const navigate = useNavigate();
 
-  const [currentUser, setCurrentUser] = useState(undefined);
-  const [darkMode, setDarkMode] = useState(false);
+  const [currentUser, setCurrentUser] =
+    useState(undefined);
+
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  const [darkMode, setDarkMode] = useState(() => {
+    return localStorage.getItem("safeRouteTheme") === "dark";
+  });
+
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
-    });
+    document.body.classList.toggle(
+      "dark-mode",
+      darkMode
+    );
+  }, [darkMode]);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(
+      auth,
+      async (user) => {
+        setCurrentUser(user);
+        setIsAdmin(false);
+
+        if (!user) {
+          return;
+        }
+
+        try {
+          const userSnapshot = await getDoc(
+            doc(db, "users", user.uid)
+          );
+
+          const role = userSnapshot.exists()
+            ? userSnapshot.data().role
+            : "user";
+
+          setIsAdmin(role === "admin");
+        } catch (error) {
+          console.error(
+            "Unable to check user role:",
+            error
+          );
+
+          setIsAdmin(false);
+        }
+      }
+    );
 
     return () => unsubscribe();
   }, []);
 
   const toggleTheme = () => {
-    const newMode = !darkMode;
-    setDarkMode(newMode);
-    document.body.classList.toggle("dark-mode", newMode);
+    const updatedMode = !darkMode;
+
+    setDarkMode(updatedMode);
+
+    localStorage.setItem(
+      "safeRouteTheme",
+      updatedMode ? "dark" : "light"
+    );
   };
 
   const closeMenu = () => {
@@ -41,82 +101,129 @@ function Navbar() {
   const handleLogout = async () => {
     try {
       await signOut(auth);
+
+      setIsAdmin(false);
       setMenuOpen(false);
+
       navigate("/");
     } catch (error) {
       console.error("Logout failed:", error);
-      alert("Logout failed.");
+      alert("Unable to log out.");
     }
   };
 
+  const getNavLinkClass = ({ isActive }) =>
+    isActive ? "navbar-link active" : "navbar-link";
+
   return (
     <nav className="navbar">
-      {/* Logo */}
-      <div className="logo">
-        <FaShieldAlt />
-        <span>SafeRoute BD</span>
-      </div>
+      <Link
+        to="/"
+        className="navbar-logo"
+        onClick={closeMenu}
+      >
+        <span className="navbar-logo-icon">
+          <FaShieldAlt />
+        </span>
 
-      {/* Navigation Links */}
-      <div className={`nav-links ${menuOpen ? "show" : ""}`}>
-        <Link
+        <span className="navbar-logo-text">
+          SafeRoute <strong>BD</strong>
+        </span>
+      </Link>
+
+      <div
+        className={`nav-links ${
+          menuOpen ? "show" : ""
+        }`}
+      >
+        <NavLink
           to="/"
-          className={location.pathname === "/" ? "active" : ""}
+          end
+          className={getNavLinkClass}
           onClick={closeMenu}
         >
           Home
-        </Link>
+        </NavLink>
 
-        {/* Full Public Map Link */}
-        <Link
+        <NavLink
           to="/map"
-          className={location.pathname === "/map" ? "active" : ""}
+          className={getNavLinkClass}
           onClick={closeMenu}
         >
-          Map
-        </Link>
+          Live Map
+        </NavLink>
 
-        
-
-        <Link
+        <NavLink
           to="/reports"
-          className={location.pathname === "/reports" ? "active" : ""}
+          className={getNavLinkClass}
           onClick={closeMenu}
         >
           Reports
-        </Link>
+        </NavLink>
 
-        <Link
+        {currentUser && (
+          <NavLink
+            to="/my-reports"
+            className={getNavLinkClass}
+            onClick={closeMenu}
+          >
+            My Reports
+          </NavLink>
+        )}
+
+        <NavLink
           to="/about"
-          className={location.pathname === "/about" ? "active" : ""}
+          className={getNavLinkClass}
           onClick={closeMenu}
         >
           About
-        </Link>
+        </NavLink>
 
-        <Link
-          to="/admin"
-          className={location.pathname === "/admin" ? "active" : ""}
-          onClick={closeMenu}
-        >
-          Admin
-        </Link>
+        {isAdmin && (
+          <NavLink
+            to="/admin"
+            className={getNavLinkClass}
+            onClick={closeMenu}
+          >
+            Admin
+          </NavLink>
+        )}
       </div>
 
-      {/* Right Side Buttons */}
       <div className="nav-actions">
+        {currentUser && (
+          <Link
+            to="/profile"
+            className="profile-nav-button"
+            onClick={closeMenu}
+            title="My Profile"
+          >
+            <FaUser />
+          </Link>
+        )}
+
         <button
+          type="button"
           className="theme-btn"
           onClick={toggleTheme}
-          title="Toggle Theme"
+          title={
+            darkMode
+              ? "Switch to light mode"
+              : "Switch to dark mode"
+          }
+          aria-label="Toggle theme"
         >
           {darkMode ? <FaSun /> : <FaMoon />}
         </button>
 
-        {currentUser ? (
+        {currentUser === undefined ? (
+          <div className="auth-loading-button">
+            Loading...
+          </div>
+        ) : currentUser ? (
           <button
             type="button"
-            className="login-btn"
+            className="login-btn logout-btn"
             onClick={handleLogout}
           >
             Logout
@@ -132,8 +239,12 @@ function Navbar() {
         )}
 
         <button
+          type="button"
           className="menu-btn"
-          onClick={() => setMenuOpen(!menuOpen)}
+          onClick={() =>
+            setMenuOpen((previous) => !previous)
+          }
+          aria-label="Toggle navigation"
         >
           {menuOpen ? <FaTimes /> : <FaBars />}
         </button>
