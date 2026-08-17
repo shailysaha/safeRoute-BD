@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import {
   FaHome,
   FaMapMarkedAlt,
@@ -9,7 +9,9 @@ import {
   FaShieldAlt,
   FaUser,
   FaFileAlt,
+  FaTimes,
 } from "react-icons/fa";
+
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 
@@ -17,99 +19,154 @@ import { auth, db } from "../../firebase/firebase";
 
 import "./Sidebar.css";
 
-function Sidebar() {
+function Sidebar({
+  isOpen = false,
+  onClose,
+}) {
   const [isAdmin, setIsAdmin] = useState(false);
-  const location = useLocation();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      if (currentUser) {
-        try {
-          const userDocRef = doc(db, "users", currentUser.uid);
-          const userSnap = await getDoc(userDocRef);
+    const unsubscribe = onAuthStateChanged(
+      auth,
+      async (currentUser) => {
+        if (!currentUser) {
+          setIsAdmin(false);
+          return;
+        }
 
-          if (userSnap.exists() && userSnap.data()?.role === "admin") {
-            setIsAdmin(true);
-          } else {
-            setIsAdmin(false);
-          }
+        try {
+          const userDocRef = doc(
+            db,
+            "users",
+            currentUser.uid
+          );
+
+          const userSnap = await getDoc(
+            userDocRef
+          );
+
+          setIsAdmin(
+            userSnap.exists() &&
+              userSnap.data()?.role === "admin"
+          );
         } catch (error) {
-          console.error("Error checking admin status:", error);
+          console.error(
+            "Error checking admin status:",
+            error
+          );
+
           setIsAdmin(false);
         }
-      } else {
-        setIsAdmin(false);
       }
-    });
+    );
 
     return () => unsubscribe();
   }, []);
 
+  const getLinkClass = ({ isActive }) =>
+    isActive ? "active" : "";
+
   return (
-    <aside className="sidebar">
-      <div className="logo">
-        <FaShieldAlt />
-        <span>SafeRoute BD</span>
-      </div>
+    <>
+      {/* Mobile dark overlay */}
+      <div
+        className={`sidebar-overlay ${
+          isOpen ? "show" : ""
+        }`}
+        onClick={onClose}
+      />
 
-      <NavLink
-        to="/"
-        className={location.pathname === "/" ? "active" : ""}
+      <aside
+        className={`sidebar ${
+          isOpen ? "sidebar-open" : ""
+        }`}
       >
-        <FaHome />
-        <span>Home</span>
-      </NavLink>
+        {/* Header / Logo */}
+        <div className="sidebar-header">
+          <div className="logo">
+            <FaShieldAlt />
+            <span>SafeRoute BD</span>
+          </div>
 
-      <NavLink
-        to="/map"
-        className={location.pathname === "/map" ? "active" : ""}
-      >
-        <FaMapMarkedAlt />
-        <span>Map</span>
-      </NavLink>
+          <button
+            type="button"
+            className="sidebar-close-btn"
+            onClick={onClose}
+            aria-label="Close navigation"
+          >
+            <FaTimes />
+          </button>
+        </div>
 
-      <NavLink
-        to="/reports"
-        className={location.pathname === "/reports" ? "active" : ""}
-      >
-        <FaExclamationTriangle />
-        <span>Reports</span>
-      </NavLink>
+        <nav className="sidebar-nav">
+          <NavLink
+            to="/"
+            end
+            className={getLinkClass}
+            onClick={onClose}
+          >
+            <FaHome />
+            <span>Home</span>
+          </NavLink>
 
-      <NavLink
-        to="/my-reports"
-        className={location.pathname === "/my-reports" ? "active" : ""}
-      >
-        <FaFileAlt />
-        <span>My Reports</span>
-      </NavLink>
+          <NavLink
+            to="/map"
+            className={getLinkClass}
+            onClick={onClose}
+          >
+            <FaMapMarkedAlt />
+            <span>Map</span>
+          </NavLink>
 
-      <NavLink
-        to="/profile"
-        className={location.pathname === "/profile" ? "active" : ""}
-      >
-        <FaUser />
-        <span>My Profile</span>
-      </NavLink>
+          <NavLink
+            to="/reports"
+            className={getLinkClass}
+            onClick={onClose}
+          >
+            <FaExclamationTriangle />
+            <span>Reports</span>
+          </NavLink>
 
-      {isAdmin && (
-        <NavLink
-          to="/admin"
-          className={location.pathname === "/admin" ? "active" : ""}
-        >
-          <FaUserShield />
-          <span>Admin</span>
-        </NavLink>
-      )}
+          <NavLink
+            to="/my-reports"
+            className={getLinkClass}
+            onClick={onClose}
+          >
+            <FaFileAlt />
+            <span>My Reports</span>
+          </NavLink>
 
-      <NavLink
-        to="/about"
-        className={location.pathname === "/about" ? "active" : ""}
-      >
-        <FaCog />
-        <span>About</span>
-      </NavLink>
-    </aside>
+          <NavLink
+            to="/profile"
+            className={getLinkClass}
+            onClick={onClose}
+          >
+            <FaUser />
+            <span>My Profile</span>
+          </NavLink>
+
+          {isAdmin && (
+            <NavLink
+              to="/admin"
+              className={getLinkClass}
+              onClick={onClose}
+            >
+              <FaUserShield />
+              <span>Admin</span>
+            </NavLink>
+          )}
+
+          <NavLink
+            to="/about"
+            className={getLinkClass}
+            onClick={onClose}
+          >
+            <FaCog />
+            <span>About</span>
+          </NavLink>
+        </nav>
+      </aside>
+    </>
   );
 }
 

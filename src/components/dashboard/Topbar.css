@@ -1,17 +1,149 @@
-.topbar{
-height:70px;
-background:#1e293b;
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:0 30px;
-color:white;
-box-shadow:0 3px 12px rgba(0,0,0,.2);
+/* ================================
+   TOPBAR
+================================ */
+
+.topbar {
+  height: 70px;
+  min-height: 70px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 0 30px;
+
+  background: #1e293b;
+  color: white;
+
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
+
+  box-sizing: border-box;
+
+  position: relative;
+  z-index: 1100;
 }
 
-.topbar-right{
-display:flex;
-gap:20px;
-font-size:22px;
-cursor:pointer;
+
+/* LEFT SIDE */
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.topbar h2 {
+  margin: 0;
+
+  color: white;
+
+  font-size: 22px;
+  font-weight: 700;
+}
+
+
+/* RIGHT SIDE */
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+
+  gap: 20px;
+
+  font-size: 22px;
+
+  cursor: pointer;
+}
+
+
+/* ================================
+   MOBILE MENU BUTTON
+================================ */
+
+.dashboard-menu-btn {
+  display: none;
+
+  width: 42px;
+  height: 42px;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  color: white;
+  background: #334155;
+
+  border: 1px solid #475569;
+  border-radius: 10px;
+
+  font-size: 23px;
+
+  cursor: pointer;
+}
+
+.dashboard-menu-btn:hover {
+  background: #475569;
+}
+
+
+/* ================================
+   TABLET / MOBILE
+================================ */
+
+@media (max-width: 768px) {
+
+  .topbar {
+    height: 64px;
+    min-height: 64px;
+
+    padding: 0 14px;
+  }
+
+  .dashboard-menu-btn {
+    display: flex;
+  }
+
+  .topbar h2 {
+    font-size: 19px;
+  }
+
+  .topbar-right {
+    gap: 12px;
+
+    font-size: 19px;
+  }
+}
+
+
+/* ================================
+   SMALL PHONE
+================================ */
+
+@media (max-width: 480px) {
+
+  .topbar {
+    padding: 0 10px;
+  }
+
+  .topbar-left {
+    gap: 9px;
+  }
+
+  .dashboard-menu-btn {
+    width: 38px;
+    height: 38px;
+
+    font-size: 20px;
+  }
+
+  .topbar h2 {
+    font-size: 17px;
+  }
+
+  .topbar-right {
+    gap: 9px;
+
+    font-size: 17px;
+  }
 }

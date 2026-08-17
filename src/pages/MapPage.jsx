@@ -168,7 +168,6 @@ function MapPage({ hideSidebar = false }) {
       return false;
     }
 
-    // Construct report object ensuring userId & metadata are always attached
     const newReport = {
       ...report,
       lat: Number(selectedLocation.lat),
@@ -184,7 +183,6 @@ function MapPage({ hideSidebar = false }) {
     try {
       const docRef = await addDoc(collection(db, "reports"), newReport);
 
-      // Local state update for immediate UI reflection
       const savedReport = {
         id: docRef.id,
         ...newReport,
@@ -272,72 +270,83 @@ function MapPage({ hideSidebar = false }) {
   return (
     <DashboardLayout>
       <div
-        className="page-layout"
-        style={{ display: "flex", width: "100%", height: "100vh" }}
+        className={`page-layout ${
+          hideSidebar ? "map-only-layout" : "report-layout"
+        }`}
       >
-        {/* Map Section */}
+        {/* MAP SECTION */}
         <div
-          style={{
-            flex: hideSidebar ? "0 0 100%" : "0 0 70%",
-            position: "relative",
-            height: "100%",
-          }}
+          className={`map-section ${
+            hideSidebar ? "map-full-width" : ""
+          }`}
         >
           <MyLocationButton onLocate={handleMyLocation} />
+
           <SOSButton onSOS={handleSOS} />
 
           <MapContainer
             center={[23.8103, 90.4125]}
             zoom={7}
-            style={{
-              height: "calc(100vh - 40px)",
-              width: "100%",
-              borderRadius: "20px",
-              overflow: "hidden",
-              boxShadow: "0 10px 30px rgba(0,0,0,.25)",
-            }}
+            className="main-leaflet-map"
           >
-            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
 
-            {/* Smooth flying animation component */}
             <FlyToLocation location={selectedLocation} />
 
             <MapController setMap={setMap} />
+
             <PoliceStations center={selectedLocation} />
+
             <Hospitals center={selectedLocation} />
+
             <ClickHandler onMapClick={setSelectedLocation} />
 
-            {/* Existing safety reports */}
+            {/* Existing reports */}
             {reports.map((report) => (
               <Marker
                 key={report.id}
-                position={[report.lat, report.lng]}
+                position={[
+                  Number(report.lat),
+                  Number(report.lng),
+                ]}
                 icon={getMarkerIcon(report.severity)}
               >
                 <Popup>
-                  <div style={{ minWidth: "220px" }}>
+                  <div className="report-popup">
                     <h3>🚨 Report</h3>
+
                     <p>
                       <strong>Area:</strong> {report.area}
                     </p>
+
                     <p>
                       <strong>District:</strong> {report.district}
                     </p>
+
                     <p>
                       <strong>Danger:</strong> {report.dangerType}
                     </p>
+
                     <p>
                       <strong>Severity:</strong> {report.severity}
                     </p>
+
                     <p>
                       <strong>Description:</strong>
                     </p>
+
                     <p>{report.description}</p>
+
                     <hr />
+
                     <small>
                       Latitude: {Number(report.lat).toFixed(5)}
                     </small>
+
                     <br />
+
                     <small>
                       Longitude: {Number(report.lng).toFixed(5)}
                     </small>
@@ -346,10 +355,10 @@ function MapPage({ hideSidebar = false }) {
               </Marker>
             ))}
 
-            {/* Highlighted selection marker */}
+            {/* Selected location */}
             {selectedLocation &&
-              !isNaN(selectedLocation.lat) &&
-              !isNaN(selectedLocation.lng) && (
+              Number.isFinite(Number(selectedLocation.lat)) &&
+              Number.isFinite(Number(selectedLocation.lng)) && (
                 <Marker
                   position={[
                     Number(selectedLocation.lat),
@@ -364,9 +373,9 @@ function MapPage({ hideSidebar = false }) {
           </MapContainer>
         </div>
 
-        {/* Sidebar Section */}
+        {/* REPORT FORM */}
         {!hideSidebar && (
-          <div style={{ flex: "0 0 30%", height: "100%" }}>
+          <div className="report-panel">
             <ReportSidebar
               selectedLocation={selectedLocation}
               setSelectedLocation={setSelectedLocation}

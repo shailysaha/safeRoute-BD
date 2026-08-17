@@ -85,7 +85,7 @@ function ReportSidebar({ selectedLocation, setSelectedLocation, onSubmit }) {
   };
 
   return (
-    <div className="sidebar">
+    <div className="report-sidebar">
       <h2>🚨 Report Dangerous Area</h2>
 
       <SearchLocation

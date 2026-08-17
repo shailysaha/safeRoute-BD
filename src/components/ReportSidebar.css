@@ -1,88 +1,304 @@
-.sidebar{
-    width:350px;
-    background:white;
-    padding:25px;
-    box-shadow:0 0 20px rgba(0,0,0,.15);
-    overflow:auto;
+/* =========================================
+   REPORT SIDEBAR
+========================================= */
+
+.report-sidebar {
+  width: 100%;
+  height: 100%;
+
+  padding: 24px;
+
+  background: #ffffff;
+  color: #0f172a;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  box-sizing: border-box;
 }
 
-.sidebar h2{
-    margin-bottom:20px;
+.report-sidebar h2 {
+  margin: 0 0 22px;
+
+  color: #0f172a;
+
+  font-size: 26px;
+  line-height: 1.25;
 }
 
-.sidebar input,
-.sidebar select,
-.sidebar textarea{
-    width:100%;
-    margin-bottom:15px;
-    padding:12px;
-    border-radius:8px;
-    border:1px solid #ccc;
+
+/* =========================================
+   FORM ELEMENTS
+========================================= */
+
+.report-sidebar input,
+.report-sidebar select,
+.report-sidebar textarea {
+  width: 100%;
+
+  margin-bottom: 14px;
+  padding: 12px 13px;
+
+  color: #0f172a;
+  background: #ffffff;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+
+  font-size: 14px;
+  font-family: inherit;
+
+  outline: none;
+
+  box-sizing: border-box;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-.sidebar button{
-    width:100%;
-    padding:15px;
-    background:#ef4444;
-    color:white;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-    font-size:16px;
+.report-sidebar input,
+.report-sidebar select {
+  min-height: 46px;
 }
 
-.sidebar button:hover{
-    background:#dc2626;
-}
-.panel-title{
-font-size:28px;
-font-weight:700;
-margin-bottom:8px;
-color:white;
+.report-sidebar textarea {
+  min-height: 100px;
+
+  resize: vertical;
 }
 
-.panel-subtitle{
-color:#9ca3af;
-margin-bottom:25px;
+
+/* Focus */
+
+.report-sidebar input:focus,
+.report-sidebar select:focus,
+.report-sidebar textarea:focus {
+  border-color: #10b981;
+
+  box-shadow:
+    0 0 0 3px rgba(16, 185, 129, 0.1);
 }
-body.dark-mode .report-panel,
-body.dark-mode .sidebar {
-  background: #1e293b;
+
+
+/* Disabled location information */
+
+.report-sidebar input:disabled {
+  color: #475569;
+  background: #f8fafc;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================
+   COORDINATE TEXT
+========================================= */
+
+.report-sidebar p {
+  margin: 4px 0 9px;
+
+  color: #64748b;
+
+  font-size: 11px;
+}
+
+
+/* =========================================
+   DIVIDER
+========================================= */
+
+.report-sidebar hr {
+  margin: 16px 0 !important;
+
+  border: none !important;
+  border-top: 1px solid #e2e8f0 !important;
+}
+
+
+/* =========================================
+   SUBMIT BUTTON
+========================================= */
+
+.report-sidebar > button {
+  width: 100%;
+  min-height: 48px;
+
+  margin-top: 4px;
+
+  padding: 12px 16px;
+
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ef4444,
+      #dc2626
+    );
+
+  border: none;
+  border-radius: 11px;
+
+  font-size: 14px;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 8px 20px rgba(239, 68, 68, 0.22);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.report-sidebar > button:hover {
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 11px 24px rgba(239, 68, 68, 0.3);
+}
+
+
+/* =========================================
+   DARK MODE
+========================================= */
+
+body.dark-mode .report-sidebar {
   color: #f8fafc;
-}
-
-body.dark-mode .sidebar h2,
-body.dark-mode .report-heading h2 {
-  color: #f8fafc;
-}
-
-body.dark-mode .report-subtitle {
-  color: #94a3b8;
-}
-
-body.dark-mode .sidebar input,
-body.dark-mode .sidebar select,
-body.dark-mode .sidebar textarea {
   background: #111827;
+}
+
+body.dark-mode .report-sidebar h2 {
   color: #f8fafc;
+}
+
+body.dark-mode .report-sidebar input,
+body.dark-mode .report-sidebar select,
+body.dark-mode .report-sidebar textarea {
+  color: #f8fafc;
+
+  background: #1e293b;
+
   border-color: #475569;
 }
 
-body.dark-mode .sidebar input::placeholder,
-body.dark-mode .sidebar textarea::placeholder {
+body.dark-mode
+.report-sidebar input::placeholder,
+body.dark-mode
+.report-sidebar textarea::placeholder {
   color: #94a3b8;
 }
 
-body.dark-mode .sidebar input:disabled {
-  background: #172033;
+body.dark-mode
+.report-sidebar input:disabled {
   color: #cbd5e1;
+
+  background: #172033;
 }
 
-body.dark-mode .sidebar select option {
+body.dark-mode
+.report-sidebar select option {
   color: #f8fafc;
+
   background: #111827;
 }
 
-body.dark-mode .sidebar hr {
-  background: #334155;
+body.dark-mode .report-sidebar p {
+  color: #94a3b8;
+}
+
+body.dark-mode .report-sidebar hr {
+  border-top-color: #334155 !important;
+}
+
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 1100px) {
+  .report-sidebar {
+    padding: 18px;
+  }
+
+  .report-sidebar h2 {
+    font-size: 22px;
+  }
+
+  .report-sidebar input,
+  .report-sidebar select,
+  .report-sidebar textarea {
+    font-size: 13px;
+  }
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 768px) {
+  .report-sidebar {
+    width: 100%;
+    height: auto;
+
+    padding: 18px;
+
+    overflow: visible;
+  }
+
+  .report-sidebar h2 {
+    margin-bottom: 18px;
+
+    font-size: 22px;
+  }
+
+  .report-sidebar input,
+  .report-sidebar select,
+  .report-sidebar textarea {
+    width: 100%;
+
+    margin-bottom: 12px;
+  }
+
+  .report-sidebar textarea {
+    min-height: 110px;
+  }
+
+  .report-sidebar > button {
+    width: 100%;
+
+    min-height: 50px;
+  }
+}
+
+
+/* =========================================
+   SMALL MOBILE
+========================================= */
+
+@media (max-width: 480px) {
+  .report-sidebar {
+    padding: 14px;
+  }
+
+  .report-sidebar h2 {
+    font-size: 20px;
+  }
+
+  .report-sidebar input,
+  .report-sidebar select,
+  .report-sidebar textarea {
+    min-height: 44px;
+
+    padding: 10px 11px;
+
+    font-size: 13px;
+  }
+
+  .report-sidebar textarea {
+    min-height: 100px;
+  }
 }
