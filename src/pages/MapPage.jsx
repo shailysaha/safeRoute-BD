@@ -123,6 +123,10 @@ function FlyToLocation({ location }) {
 function MapPage({ hideSidebar = false }) {
   const navigate = useNavigate();
   const [selectedLocation, setSelectedLocation] = useState(null);
+
+  // Required State
+  const [currentLocation, setCurrentLocation] = useState(null);
+
   const [reports, setReports] = useState([]);
   const [map, setMap] = useState(null);
 
@@ -139,6 +143,7 @@ function MapPage({ hideSidebar = false }) {
         ...doc.data(),
       }));
 
+      console.log("REPORTS FROM FIRESTORE:", firebaseReports);
       setReports(firebaseReports);
     } catch (error) {
       console.error("Error loading reports:", error);
@@ -217,11 +222,36 @@ function MapPage({ hideSidebar = false }) {
     }
   };
 
+  // Required handleMyLocation function
   const handleMyLocation = (location) => {
-    setSelectedLocation(location);
+    if (!location) return;
+
+    const lat = Number(location.lat);
+    const lng = Number(location.lng);
+
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+      console.error("Invalid GPS location:", location);
+      return;
+    }
+
+    const locationData = {
+      ...location,
+      lat,
+      lng,
+      name: "My Current Location",
+    };
+
+    console.log("CURRENT LOCATION:", locationData);
+
+    setCurrentLocation(locationData);
+
+    // Police + Hospital search-এর জন্য
+    setSelectedLocation(locationData);
 
     if (map) {
-      map.setView([location.lat, location.lng], 16);
+      map.flyTo([lat, lng], 16, {
+        duration: 1.2,
+      });
     }
   };
 
@@ -281,7 +311,6 @@ function MapPage({ hideSidebar = false }) {
           }`}
         >
           <MyLocationButton onLocate={handleMyLocation} />
-
           <SOSButton onSOS={handleSOS} />
 
           <MapContainer
@@ -294,76 +323,91 @@ function MapPage({ hideSidebar = false }) {
             />
 
             <FlyToLocation location={selectedLocation} />
-
             <MapController setMap={setMap} />
-
             <PoliceStations center={selectedLocation} />
-
             <Hospitals center={selectedLocation} />
-
             <ClickHandler onMapClick={setSelectedLocation} />
 
-            {/* Existing reports */}
-            {reports.map((report) => (
+            {/* Current GPS Location Marker */}
+            {currentLocation && (
               <Marker
-                key={report.id}
                 position={[
-                  Number(report.lat),
-                  Number(report.lng),
+                  Number(currentLocation.lat),
+                  Number(currentLocation.lng),
                 ]}
-                icon={getMarkerIcon(report.severity)}
+                icon={blueIcon}
               >
                 <Popup>
-                  <div className="report-popup">
-                    <h3>🚨 Report</h3>
-
-                    <p>
-                      <strong>Area:</strong> {report.area}
-                    </p>
-
-                    <p>
-                      <strong>District:</strong> {report.district}
-                    </p>
-
-                    <p>
-                      <strong>Danger:</strong> {report.dangerType}
-                    </p>
-
-                    <p>
-                      <strong>Severity:</strong> {report.severity}
-                    </p>
-
-                    <p>
-                      <strong>Description:</strong>
-                    </p>
-
-                    <p>{report.description}</p>
-
-                    <hr />
-
-                    <small>
-                      Latitude: {Number(report.lat).toFixed(5)}
-                    </small>
-
-                    <br />
-
-                    <small>
-                      Longitude: {Number(report.lng).toFixed(5)}
-                    </small>
-                  </div>
+                  <strong>📍 My Current Location</strong>
                 </Popup>
               </Marker>
-            ))}
+            )}
 
-            {/* Selected location */}
+            {/* Existing reports */}
+            {reports
+              .filter(
+                (report) =>
+                  Number.isFinite(Number(report.lat)) &&
+                  Number.isFinite(Number(report.lng))
+              )
+              .map((report) => (
+                <Marker
+                  key={report.id}
+                  position={[
+                    Number(report.lat),
+                    Number(report.lng),
+                  ]}
+                  icon={getMarkerIcon(report.severity)}
+                >
+                  <Popup>
+                    <div className="report-popup">
+                      <h3>🚨 Report</h3>
+                      <p>
+                        <strong>Area:</strong> {report.area}
+                      </p>
+                      <p>
+                        <strong>District:</strong> {report.district}
+                      </p>
+                      <p>
+                        <strong>Danger:</strong> {report.dangerType}
+                      </p>
+                      <p>
+                        <strong>Severity:</strong> {report.severity}
+                      </p>
+                      <p>
+                        <strong>Description:</strong>
+                      </p>
+                      <p>{report.description}</p>
+                      <hr />
+                      <small>
+                        Latitude: {Number(report.lat).toFixed(5)}
+                      </small>
+                      <br />
+                      <small>
+                        Longitude: {Number(report.lng).toFixed(5)}
+                      </small>
+                    </div>
+                  </Popup>
+                </Marker>
+              ))}
+
+            {/* Manually selected / searched location (duplicate avoid logic) */}
             {selectedLocation &&
               Number.isFinite(Number(selectedLocation.lat)) &&
-              Number.isFinite(Number(selectedLocation.lng)) && (
+              Number.isFinite(Number(selectedLocation.lng)) &&
+              !(
+                currentLocation &&
+                Number(selectedLocation.lat) ===
+                  Number(currentLocation.lat) &&
+                Number(selectedLocation.lng) ===
+                  Number(currentLocation.lng)
+              ) && (
                 <Marker
                   position={[
                     Number(selectedLocation.lat),
                     Number(selectedLocation.lng),
                   ]}
+                  icon={blueIcon}
                 >
                   <Popup>
                     {selectedLocation.name || "Selected Location"}

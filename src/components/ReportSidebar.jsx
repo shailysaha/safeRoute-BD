@@ -31,6 +31,7 @@ function ReportSidebar({ selectedLocation, setSelectedLocation, onSubmit }) {
   }, [selectedLocation]);
 
   const handleSubmit = async () => {
+    // Location validation
     if (!formData.lat || !formData.lng) {
       alert(
         "Please select a location on the map or use the search bar first."
@@ -38,11 +39,13 @@ function ReportSidebar({ selectedLocation, setSelectedLocation, onSubmit }) {
       return;
     }
 
+    // Required field validation (including trimmed description)
     if (
       !formData.area ||
       !formData.district ||
       !formData.dangerType ||
-      !formData.severity
+      !formData.severity ||
+      !formData.description.trim()
     ) {
       alert("Please fill all required fields.");
       return;
@@ -56,7 +59,7 @@ function ReportSidebar({ selectedLocation, setSelectedLocation, onSubmit }) {
         lng: formData.lng,
         dangerType: formData.dangerType,
         severity: formData.severity,
-        description: formData.description,
+        description: formData.description.trim(),
       });
 
       // Do not show success or reset if login is required or submit failed
@@ -130,7 +133,7 @@ function ReportSidebar({ selectedLocation, setSelectedLocation, onSubmit }) {
       </select>
 
       <textarea
-        placeholder="Description"
+        placeholder="Description *"
         value={formData.description}
         onChange={(e) =>
           setFormData({ ...formData, description: e.target.value })

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Marker, Popup } from "react-leaflet";
+import { hospitalIcon } from "../utils/markerIcons";
 
 function Hospitals({ center, onHospitalFound }) {
   const [hospitals, setHospitals] = useState([]);
@@ -94,13 +95,18 @@ function Hospitals({ center, onHospitalFound }) {
     <>
       {hospitals.map((hospital) => (
         <Marker
-          key={`hospital-${hospital.id}`}
-          position={[hospital.lat, hospital.lng]}
-        >
-          <Popup>
-            🏥 <strong>{hospital.name}</strong>
-          </Popup>
-        </Marker>
+  position={[
+    Number(hospital.lat),
+    Number(hospital.lng),
+  ]}
+  icon={hospitalIcon}
+>
+  <Popup>
+    <strong>🏥 Hospital</strong>
+    <br />
+    {hospital.name || "Hospital"}
+    </Popup>
+    </Marker>
       ))}
     </>
   );

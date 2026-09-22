@@ -1,17 +1,128 @@
-/* =========================================
-   MAP / REPORT PAGE
-========================================= */
+/* ========================================
+   LEAFLET CUSTOM MARKERS
+======================================== */
+
+.custom-div-icon {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Main marker shape */
+.custom-map-marker {
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  border: 3px solid #ffffff;
+
+  font-size: 19px;
+  line-height: 1;
+
+  box-sizing: border-box;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+/* Keep emoji centered */
+.custom-map-marker span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  height: 100%;
+}
+
+
+/* ========================================
+   INCIDENT MARKERS
+======================================== */
+
+.incident-high-marker {
+  background: #dc2626;
+}
+
+.incident-medium-marker {
+  background: #f59e0b;
+}
+
+.incident-low-marker {
+  background: #22c55e;
+}
+
+
+/* ========================================
+   CURRENT LOCATION
+======================================== */
+
+.current-location-marker {
+  background: #2563eb;
+}
+
+
+/* ========================================
+   SELECTED START LOCATION
+======================================== */
+
+.selected-location-marker {
+  background: #f59e0b;
+}
+
+
+/* ========================================
+   DESTINATION
+======================================== */
+
+.destination-marker {
+  background: #16a34a;
+}
+
+
+/* ========================================
+   DEFAULT LOCATION MARKER
+======================================== */
+
+.default-marker {
+  background: #3b82f6;
+}
+
+
+/* ========================================
+   POLICE STATION
+======================================== */
+
+.police-marker {
+  background: #1d4ed8;
+}
+
+
+/* ========================================
+   HOSPITAL
+======================================== */
+
+.hospital-marker {
+  background: #dc2626;
+}
+
+
+/* ========================================
+   MAP CONTAINER
+======================================== */
 
 .page-layout {
   display: flex;
 
   width: 100%;
-  min-width: 0;
-
   height: calc(100vh - 110px);
 
-  gap: 18px;
+  min-height: 500px;
 
+  gap: 18px;
   padding: 18px;
 
   background: #0f172a;
@@ -21,51 +132,46 @@
   overflow: hidden;
 }
 
-
-/* =========================================
-   MAP
-========================================= */
-
 .map-section {
   position: relative;
 
-  flex: 1 1 70%;
-
+  flex: 1;
   min-width: 0;
+
   height: 100%;
+  min-height: 500px;
 
   overflow: hidden;
 
   border-radius: 18px;
 
-  box-shadow:
-    0 10px 30px rgba(0, 0, 0, 0.32);
+  background: #e5e7eb;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
 }
-
-
-/* Public / Map-only page */
-
-.map-full-width {
-  flex: 1 1 100%;
-  width: 100%;
-}
-
-
-/* Actual Leaflet map */
 
 .main-leaflet-map {
   width: 100% !important;
   height: 100% !important;
 
+  min-height: 500px;
+
   border-radius: 18px;
 
   overflow: hidden;
 }
 
+.map-section .leaflet-container {
+  width: 100% !important;
+  height: 100% !important;
 
-/* =========================================
+  min-height: 500px;
+}
+
+
+/* ========================================
    REPORT PANEL
-========================================= */
+======================================== */
 
 .report-panel {
   flex: 0 0 340px;
@@ -82,64 +188,44 @@
 
   border-radius: 18px;
 
-  box-shadow:
-    0 10px 30px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
 
   box-sizing: border-box;
 }
 
 
-/* =========================================
-   MAP POPUP
-========================================= */
+/* ========================================
+   LEAFLET CONTROLS
+======================================== */
 
-.report-popup {
-  min-width: 200px;
+.leaflet-control-container {
+  position: relative;
+  z-index: 1200;
 }
 
-.report-popup h3 {
-  margin: 0 0 8px;
-}
-
-.report-popup p {
-  margin: 5px 0;
-}
-
-
-/* =========================================
-   TABLET
-========================================= */
-
-@media (max-width: 1100px) {
-
-  .page-layout {
-    gap: 12px;
-    padding: 12px;
-  }
-
-  .map-section {
-    flex: 1 1 65%;
-  }
-
-  .report-panel {
-    flex: 0 0 300px;
-    width: 300px;
-  }
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 1200;
 }
 
 
-/* =========================================
+/* ========================================
+   SOS + MY LOCATION BUTTON
+======================================== */
+
+.sos-button,
+.my-location-button {
+  z-index: 1500;
+}
+
+
+/* ========================================
    MOBILE
-========================================= */
+======================================== */
 
 @media (max-width: 768px) {
-
   .page-layout {
-    display: flex;
-
     flex-direction: column;
-
-    width: 100%;
 
     height: auto;
     min-height: 100vh;
@@ -151,92 +237,82 @@
     overflow: visible;
   }
 
-
-  /* Map on top */
-
   .map-section {
-    flex: none;
-
     width: 100%;
     height: 55vh;
+
+    min-height: 360px;
+
+    flex: none;
+
+    border-radius: 14px;
+  }
+
+  .main-leaflet-map,
+  .map-section .leaflet-container {
+    width: 100% !important;
+    height: 100% !important;
 
     min-height: 360px;
 
     border-radius: 14px;
   }
 
-
-  .main-leaflet-map {
-    width: 100% !important;
-    height: 100% !important;
-
-    border-radius: 14px;
-  }
-
-
-  /* Report form under map */
-
   .report-panel {
+    width: 100%;
+
     flex: none;
 
-    width: 100%;
-    max-width: none;
-
     height: auto;
-    min-height: auto;
 
     overflow: visible;
 
     border-radius: 14px;
   }
 
+  .custom-map-marker {
+    width: 36px;
+    height: 36px;
 
-  /* Public map page */
-
-  .map-only-layout {
-    min-height: auto;
-  }
-
-  .map-only-layout .map-section {
-    width: 100%;
-
-    height: calc(100vh - 100px);
-
-    min-height: 500px;
+    font-size: 17px;
   }
 }
 
 
-/* =========================================
-   SMALL PHONES
-========================================= */
+/* ========================================
+   SMALL MOBILE
+======================================== */
 
 @media (max-width: 480px) {
-
   .page-layout {
     padding: 6px;
-    gap: 10px;
   }
 
   .map-section {
     height: 50vh;
+
     min-height: 330px;
   }
 
-  .map-only-layout .map-section {
-    height: calc(100vh - 90px);
-    min-height: 450px;
+  .main-leaflet-map,
+  .map-section .leaflet-container {
+    min-height: 330px;
   }
 
-  .report-panel {
-    width: 100%;
+  .custom-map-marker {
+    width: 34px;
+    height: 34px;
+
+    font-size: 16px;
+
+    border-width: 2px;
   }
 }
 
 
-/* =========================================
+/* ========================================
    DARK MODE
-========================================= */
+======================================== */
 
 body.dark-mode .page-layout {
   background: #0f172a;

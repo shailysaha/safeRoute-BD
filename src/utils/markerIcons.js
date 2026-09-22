@@ -1,37 +1,72 @@
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
-const shadow =
-  "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png";
+const createMarker = (emoji, markerClass) =>
+  L.divIcon({
+    html: `
+      <div class="custom-map-marker ${markerClass}">
+        ${emoji}
+      </div>
+    `,
+    className: "custom-div-icon",
+    iconSize: [42, 42],
+    iconAnchor: [21, 42],
+    popupAnchor: [0, -40],
+  });
 
-export const redIcon = new L.Icon({
-  iconUrl:
-    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
-  shadowUrl: shadow,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-});
+/* =========================
+   REPORT MARKERS
+========================= */
 
-export const orangeIcon = new L.Icon({
-  iconUrl:
-    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-orange.png",
-  shadowUrl: shadow,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-});
+export const redIcon = createMarker(
+  "⚠️",
+  "incident-high-marker"
+);
 
-export const greenIcon = new L.Icon({
-  iconUrl:
-    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png",
-  shadowUrl: shadow,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-});
+export const orangeIcon = createMarker(
+  "⚠️",
+  "incident-medium-marker"
+);
 
-export const blueIcon = new L.Icon({
-  iconUrl:
-    "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  shadowUrl: shadow,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-});
+export const greenIcon = createMarker(
+  "⚠️",
+  "incident-low-marker"
+);
+
+export const blueIcon = createMarker(
+  "📍",
+  "default-marker"
+);
+
+/* =========================
+   LOCATION MARKERS
+========================= */
+
+export const currentLocationIcon = createMarker(
+  "📍",
+  "current-location-marker"
+);
+
+export const selectedLocationIcon = createMarker(
+  "📌",
+  "selected-location-marker"
+);
+
+export const destinationIcon = createMarker(
+  "🏁",
+  "destination-marker"
+);
+
+/* =========================
+   EMERGENCY SERVICE MARKERS
+========================= */
+
+export const policeIcon = createMarker(
+  "🚓",
+  "police-marker"
+);
+
+export const hospitalIcon = createMarker(
+  "🏥",
+  "hospital-marker"
+);

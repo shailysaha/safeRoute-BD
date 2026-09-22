@@ -1,25 +1,52 @@
 function MyLocationButton({ onLocate }) {
   const getLocation = () => {
     if (!navigator.geolocation) {
-      alert("Geolocation is not supported.");
+      alert("Geolocation is not supported by your browser.");
       return;
     }
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        onLocate({
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        });
+        const location = {
+          lat: Number(position.coords.latitude),
+          lng: Number(position.coords.longitude),
+          name: "My Current Location",
+        };
+
+        console.log("📍 GPS LOCATION:", location);
+
+        if (onLocate) {
+          onLocate(location);
+        }
       },
-      () => {
-        alert("Unable to get your location.");
+
+      (error) => {
+        console.error("Geolocation error:", error);
+
+        if (error.code === 1) {
+          alert(
+            "Location permission denied. Please allow location access."
+          );
+        } else if (error.code === 2) {
+          alert("Your location is currently unavailable.");
+        } else if (error.code === 3) {
+          alert("Location request timed out. Please try again.");
+        } else {
+          alert("Unable to get your location.");
+        }
+      },
+
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
       }
     );
   };
 
   return (
     <button
+      type="button"
       onClick={getLocation}
       style={{
         position: "absolute",

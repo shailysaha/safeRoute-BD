@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Marker, Popup } from "react-leaflet";
-
+import { policeIcon } from "../utils/markerIcons";
 function PoliceStations({ center, onPoliceFound }) {
   const [stations, setStations] = useState([]);
 
@@ -90,13 +90,18 @@ function PoliceStations({ center, onPoliceFound }) {
     <>
       {stations.map((station) => (
         <Marker
-          key={`police-${station.id}`}
-          position={[station.lat, station.lng]}
-        >
-          <Popup>
-            🚨 <strong>{station.name}</strong>
-          </Popup>
-        </Marker>
+  position={[
+    Number(station.lat),
+    Number(station.lng),
+  ]}
+  icon={policeIcon}
+>
+  <Popup>
+    <strong>🚓 Police Station</strong>
+    <br />
+    {station.name || "Police Station"}
+     </Popup>
+     </Marker>
       ))}
     </>
   );

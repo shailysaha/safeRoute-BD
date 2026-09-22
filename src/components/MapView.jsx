@@ -11,29 +11,22 @@ import "leaflet/dist/leaflet.css";
 import RouteMachine from "./RouteMachine";
 import PoliceStations from "./PoliceStations";
 import Hospitals from "./Hospitals";
+import {
+  currentLocationIcon,
+  selectedLocationIcon,
+  destinationIcon,
+} from "../utils/markerIcons";
 
-function MapUpdater({
-  currentLocation,
-  selectedLocation,
-  destination,
-}) {
+function MapUpdater({ currentLocation, selectedLocation, destination }) {
   const map = useMap();
-
-  const targetLocation =
-    destination || selectedLocation || currentLocation;
+  const targetLocation = destination || selectedLocation || currentLocation;
 
   const lat = Number(targetLocation?.lat);
   const lng = Number(targetLocation?.lng);
 
   useEffect(() => {
-    if (
-      targetLocation &&
-      Number.isFinite(lat) &&
-      Number.isFinite(lng)
-    ) {
-      map.flyTo([lat, lng], 15, {
-        duration: 1.5,
-      });
+    if (targetLocation && Number.isFinite(lat) && Number.isFinite(lng)) {
+      map.flyTo([lat, lng], 15, { duration: 1.5 });
     }
   }, [lat, lng, map, targetLocation]);
 
@@ -51,26 +44,17 @@ function MapView({
   onRouteCalculated,
 }) {
   const defaultCenter = [23.8103, 90.4125];
-
-  const nearbyCenter =
-    destination || selectedLocation || currentLocation;
+  const nearbyCenter = destination || selectedLocation || currentLocation;
 
   const isValidCoord = (location) => {
-    if (!location) {
-      return false;
-    }
-
+    if (!location) return false;
     const lat = Number(location.lat);
     const lng = Number(location.lng);
-
     return Number.isFinite(lat) && Number.isFinite(lng);
   };
 
   const nearbyLat = Number(nearbyCenter?.lat);
   const nearbyLng = Number(nearbyCenter?.lng);
-
-  // A new key is generated whenever the search coordinates change.
-  // React will remount the nearby components and run fresh API calls.
   const nearbyKey = isValidCoord(nearbyCenter)
     ? `${nearbyLat.toFixed(6)}-${nearbyLng.toFixed(6)}`
     : "no-center";
@@ -79,10 +63,7 @@ function MapView({
     <MapContainer
       center={defaultCenter}
       zoom={13}
-      style={{
-        height: "100%",
-        width: "100%",
-      }}
+      style={{ height: "100%", width: "100%" }}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -95,73 +76,56 @@ function MapView({
         destination={destination}
       />
 
+      {/* CURRENT / START LOCATION */}
       {isValidCoord(currentLocation) && (
         <Marker
-          position={[
-            Number(currentLocation.lat),
-            Number(currentLocation.lng),
-          ]}
+          position={[Number(currentLocation.lat), Number(currentLocation.lng)]}
+          icon={currentLocationIcon}
         >
           <Popup>📍 Your Current Location</Popup>
         </Marker>
       )}
 
+      {/* SELECTED START LOCATION */}
       {isValidCoord(selectedLocation) && !destination && (
         <Marker
-          position={[
-            Number(selectedLocation.lat),
-            Number(selectedLocation.lng),
-          ]}
+          position={[Number(selectedLocation.lat), Number(selectedLocation.lng)]}
+          icon={selectedLocationIcon}
         >
-          <Popup>
-            🎯{" "}
-            {selectedLocation.name ||
-              "Selected Location"}
-          </Popup>
+          <Popup>📌 {selectedLocation.name || "Selected Location"}</Popup>
         </Marker>
       )}
 
+      {/* DESTINATION */}
       {isValidCoord(destination) && (
         <Marker
-          position={[
-            Number(destination.lat),
-            Number(destination.lng),
-          ]}
+          position={[Number(destination.lat), Number(destination.lng)]}
+          icon={destinationIcon}
         >
-          <Popup>
-            🏁 {destination.name || "Destination"}
-          </Popup>
+          <Popup>🏁 {destination.name || "Destination"}</Popup>
         </Marker>
       )}
 
-      {isValidCoord(currentLocation) &&
-        isValidCoord(destination) && (
-          <RouteMachine
-            currentLocation={currentLocation}
-            destination={destination}
-            setDistance={setDistance}
-            setDuration={setDuration}
-            onRouteCalculated={onRouteCalculated}
-          />
-        )}
+      {isValidCoord(currentLocation) && isValidCoord(destination) && (
+        <RouteMachine
+          currentLocation={currentLocation}
+          destination={destination}
+          setDistance={setDistance}
+          setDuration={setDuration}
+          onRouteCalculated={onRouteCalculated}
+        />
+      )}
 
       {isValidCoord(nearbyCenter) && (
         <>
           <PoliceStations
             key={`police-${nearbyKey}`}
-            center={{
-              lat: nearbyLat,
-              lng: nearbyLng,
-            }}
+            center={{ lat: nearbyLat, lng: nearbyLng }}
             onPoliceFound={onPoliceFound}
           />
-
           <Hospitals
             key={`hospital-${nearbyKey}`}
-            center={{
-              lat: nearbyLat,
-              lng: nearbyLng,
-            }}
+            center={{ lat: nearbyLat, lng: nearbyLng }}
             onHospitalFound={onHospitalFound}
           />
         </>
